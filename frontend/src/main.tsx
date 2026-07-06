@@ -23,7 +23,7 @@ createRoot(rootElement).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <CommandPaletteProvider>
-          <BrowserRouter>
+          <BrowserRouter basename="/PixelPilot">
             <App />
           </BrowserRouter>
         </CommandPaletteProvider>
