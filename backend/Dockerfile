@@ -17,14 +17,12 @@ RUN apk add --no-cache \
     python3 \
     py3-pip \
     py3-numpy \
+    py3-opencv \
     tesseract-ocr \
     libstdc++ \
     libgomp
 
 WORKDIR /app
-
-COPY requirements.txt ./
-RUN pip3 install --break-system-packages -r requirements.txt
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
