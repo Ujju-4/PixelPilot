@@ -12,7 +12,9 @@ export class ApiRequestError extends Error {
   }
 }
 
-const BASE_URL = '/api';
+const BASE_URL = import.meta.env.PROD
+  ? 'https://backend-production-18f78.up.railway.app/api'
+  : 'http://localhost:4000/api';
 
 export async function apiGet<T>(path: string): Promise<T> {
   const response = await fetch(`${BASE_URL}${path}`, {
@@ -32,7 +34,10 @@ export async function apiGet<T>(path: string): Promise<T> {
 export async function apiPost<T>(path: string, payload: unknown): Promise<T> {
   const response = await fetch(`${BASE_URL}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
     body: JSON.stringify(payload),
   });
 
@@ -47,7 +52,7 @@ export async function apiPost<T>(path: string, payload: unknown): Promise<T> {
 
 /**
  * Uploads form data via XHR (rather than fetch) so we can report real upload
- * progress percentages, used for the drag & drop upload progress bar.
+ * progress percentages.
  */
 export function apiUpload<T>(
   path: string,
@@ -56,6 +61,7 @@ export function apiUpload<T>(
 ): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+
     xhr.open('POST', `${BASE_URL}${path}`);
     xhr.responseType = 'json';
 
@@ -67,19 +73,40 @@ export function apiUpload<T>(
 
     xhr.onload = () => {
       const body = xhr.response as ApiResult<T>;
+
       if (!body || typeof body !== 'object') {
-        reject(new ApiRequestError(xhr.status, 'INVALID_RESPONSE', 'Server returned an unreadable response.'));
+        reject(
+          new ApiRequestError(
+            xhr.status,
+            'INVALID_RESPONSE',
+            'Server returned an unreadable response.',
+          ),
+        );
         return;
       }
+
       if (!body.success) {
-        reject(new ApiRequestError(xhr.status, body.error.code, body.error.message));
+        reject(
+          new ApiRequestError(
+            xhr.status,
+            body.error.code,
+            body.error.message,
+          ),
+        );
         return;
       }
+
       resolve(body.data);
     };
 
     xhr.onerror = () => {
-      reject(new ApiRequestError(0, 'NETWORK_ERROR', 'Could not reach the server. Check your connection and try again.'));
+      reject(
+        new ApiRequestError(
+          0,
+          'NETWORK_ERROR',
+          'Could not reach the server. Check your connection and try again.',
+        ),
+      );
     };
 
     xhr.send(formData);
