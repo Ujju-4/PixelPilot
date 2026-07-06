@@ -1,6 +1,7 @@
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 import { useState } from 'react';
 import { uploadImage } from '@/services/imagesService';
+import { addHistoryEntry } from '@/services/localHistory';
 import type { UploadImageResponse } from '@/types/image';
 
 interface UseImageUploadResult {
@@ -15,6 +16,16 @@ export function useImageUpload(): UseImageUploadResult {
     mutationFn: (file: File) => {
       setProgress(0);
       return uploadImage(file, setProgress);
+    },
+
+    onSuccess: (result) => {
+      addHistoryEntry({
+        id: result.asset.id,
+        name: result.asset.originalName,
+        createdAt: result.asset.createdAt,
+        uploadedAsset: result.asset,
+        editedAssets: [],
+      });
     },
   });
 

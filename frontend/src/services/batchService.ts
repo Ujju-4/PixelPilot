@@ -1,4 +1,9 @@
-import { apiGet, apiUpload } from '@/services/apiClient';
+import { apiUpload } from '@/services/apiClient';
+import {
+  getHistory,
+  deleteHistoryEntryLocal,
+  renameHistoryEntryLocal,
+} from '@/services/localHistory';
 import type { BatchUploadResponse, HistoryEntry } from '@/types/history';
 
 export function batchUploadImages(
@@ -11,25 +16,27 @@ export function batchUploadImages(
 }
 
 export function buildBatchDownloadUrl(ids: string[]): string {
-  return `/api/batch/download?ids=${ids.join(',')}`;
+  const API_BASE_URL = import.meta.env.PROD
+    ? 'https://backend-production-18f78.up.railway.app/api'
+    : 'http://localhost:4000/api';
+
+  return `${API_BASE_URL}/batch/download?ids=${ids.join(',')}`;
 }
 
-export function listHistory(): Promise<HistoryEntry[]> {
-  return apiGet<HistoryEntry[]>('/history');
+export async function listHistory(): Promise<HistoryEntry[]> {
+  return getHistory();
 }
 
-export function deleteHistoryEntry(id: string): Promise<{ deleted: true }> {
-  return fetch(`/api/history/${id}`, { method: 'DELETE' })
-    .then((r) => r.json())
-    .then((b) => b.data);
+export async function deleteHistoryEntry(
+  id: string,
+): Promise<{ deleted: true }> {
+  deleteHistoryEntryLocal(id);
+  return { deleted: true };
 }
 
-export function renameHistoryEntry(id: string, name: string): Promise<HistoryEntry> {
-  return fetch(`/api/history/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name }),
-  })
-    .then((r) => r.json())
-    .then((b) => b.data);
+export async function renameHistoryEntry(
+  id: string,
+  name: string,
+): Promise<HistoryEntry> {
+  return renameHistoryEntryLocal(id, name);
 }

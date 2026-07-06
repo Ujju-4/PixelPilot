@@ -12,6 +12,7 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useCommandPalette } from '@/contexts/CommandPaletteContext';
 import { getImageFileUrl } from '@/services/imagesService';
+import { addEditedAssetLocal } from '@/services/localHistory';
 import { ApiRequestError } from '@/services/apiClient';
 import type { UploadImageResponse } from '@/types/image';
 import type { EditResult } from '@/types/edit';
@@ -70,9 +71,15 @@ function EditorWorkspace({ uploadResult, originalPreviewUrl, onReset }: {
   }, [registerActions, clearActions, canUndo, undo, onReset]);
 
   const handleEditResult = (result: EditResult) => {
-    push(result.asset);
-    setShowComparison(false);
-  };
+  push(result.asset);
+
+  addEditedAssetLocal(
+    uploadResult.asset.id,
+    result.asset,
+  );
+
+  setShowComparison(false);
+};
 
   return (
     <div className="flex w-full max-w-4xl flex-col gap-4">
