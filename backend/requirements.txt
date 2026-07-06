@@ -1,10 +1,2 @@
-# Python dependencies for the PixelPilot AI backend sidecar scripts.
-# Install with: pip install -r requirements.txt --break-system-packages
-#
-# Tesseract OCR is a system binary, not a pip package.
-# Install it separately:
-#   Ubuntu/Debian: sudo apt-get install tesseract-ocr
-#   macOS:         brew install tesseract
-#   Alpine:        apk add tesseract-ocr
-opencv-python-headless>=4.13.0
+opencv-python-headless==4.12.0.88
 numpy>=2.0.0
