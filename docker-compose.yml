@@ -1,0 +1,47 @@
+name: pixelpilot-ai
+
+services:
+  backend:
+    build:
+      context: ./backend
+      target: builder
+    command: npx tsx watch src/server.ts
+    environment:
+      NODE_ENV: development
+      PORT: "4000"
+      CORS_ORIGIN: "http://localhost:5173"
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend/src:/app/src:ro
+      - ./backend/scripts:/app/scripts:ro
+      - backend_uploads:/app/uploads
+      - backend_outputs:/app/outputs
+      - backend_history:/app/storage/history
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/api/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    command: npx vite --host 0.0.0.0
+    environment:
+      NODE_ENV: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app:ro
+      - /app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  backend_uploads:
+  backend_outputs:
+  backend_history:
