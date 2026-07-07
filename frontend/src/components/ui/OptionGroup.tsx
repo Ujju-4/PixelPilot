@@ -19,10 +19,10 @@ export function OptionGroup<T extends string>({ label, options, value, onChange 
             onClick={() => onChange(option.value)}
             aria-pressed={value === option.value}
             className={[
-              'rounded px-2.5 py-1 text-xs font-medium transition-all duration-150 border',
+              'h-8 rounded-lg border px-3 text-xs font-medium transition-all duration-150',
               value === option.value
-                ? 'bg-ink dark:bg-ink-dark text-canvas dark:text-canvas-dark border-transparent'
-                : 'border-border/50 dark:border-border-dark/50 text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark hover:border-border dark:hover:border-border-dark bg-transparent',
+                ? 'bg-ink dark:bg-ink-dark text-canvas dark:text-canvas-dark border-transparent shadow-sm'
+                : 'border-border/60 dark:border-border-dark/50 text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark hover:border-border dark:hover:border-border-dark bg-transparent',
             ].join(' ')}
           >
             {option.label}

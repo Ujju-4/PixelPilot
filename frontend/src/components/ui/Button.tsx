@@ -24,8 +24,8 @@ const VARIANT_CLASSES: Record<Variant, string> = {
 };
 
 const SIZE_CLASSES: Record<Size, string> = {
-  sm: 'h-6 px-2.5 text-xs gap-1',
-  md: 'h-7 px-3 text-xs gap-1.5',
+  sm: 'h-7 px-3 text-xs gap-1.5',
+  md: 'h-9 px-4 text-[13px] gap-1.5',
 };
 
 export function Button({
@@ -45,7 +45,7 @@ export function Button({
       type="button"
       disabled={isDisabled}
       className={[
-        'inline-flex items-center justify-center rounded border font-medium transition-all duration-150 select-none',
+        'inline-flex items-center justify-center rounded-lg border font-medium transition-all duration-150 select-none',
         'disabled:opacity-40 disabled:cursor-not-allowed',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],

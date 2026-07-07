@@ -7,35 +7,42 @@ interface ToggleRowProps {
 
 export function ToggleRow({ label, description, checked, onChange }: ToggleRowProps) {
   return (
-    <label className={[
-      'flex cursor-pointer items-start gap-2.5 rounded border px-2.5 py-2 transition-all duration-150',
-      checked
-        ? 'border-accent/25 dark:border-accent/20 bg-accent-subtle dark:bg-accent-subtle-dark'
-        : 'border-border/40 dark:border-border-dark/40 hover:border-border dark:hover:border-border-dark bg-canvas dark:bg-canvas-dark',
-    ].join(' ')}>
-      <div className="mt-0.5 relative shrink-0">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          className="sr-only"
-        />
-        <div className={[
-          'h-3.5 w-3.5 rounded-sm flex items-center justify-center transition-all duration-150 border',
+    <label
+      className={[
+        'group flex cursor-pointer items-start gap-3 rounded-lg border px-3.5 py-3 transition-all duration-150',
+        checked
+          ? 'border-accent/30 bg-accent-subtle dark:border-accent/25 dark:bg-accent-subtle-dark'
+          : 'border-border/60 bg-surface hover:border-border hover:bg-canvas dark:border-border-dark/50 dark:bg-surface-dark dark:hover:border-border-dark dark:hover:bg-canvas-dark',
+      ].join(' ')}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="sr-only"
+      />
+      <div
+        aria-hidden="true"
+        className={[
+          'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border transition-all duration-150',
           checked
-            ? 'bg-accent border-accent'
-            : 'border-border dark:border-border-dark bg-surface dark:bg-surface-dark',
-        ].join(' ')}>
-          {checked && (
-            <svg viewBox="0 0 10 10" fill="none" className="h-2 w-2">
-              <path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          )}
-        </div>
+            ? 'border-accent bg-accent'
+            : 'border-border bg-surface group-hover:border-ink-tertiary dark:border-border-dark dark:bg-surface-dark dark:group-hover:border-ink-dark-tertiary',
+        ].join(' ')}
+      >
+        {checked && (
+          <svg viewBox="0 0 10 10" fill="none" className="h-2.5 w-2.5">
+            <path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
       </div>
-      <span>
-        <span className="block text-xs font-medium text-ink dark:text-ink-dark leading-snug">{label}</span>
-        <span className="block text-[11px] text-ink-secondary dark:text-ink-dark-secondary mt-0.5 leading-snug">{description}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-semibold leading-snug text-ink dark:text-ink-dark">
+          {label}
+        </span>
+        <span className="mt-0.5 block text-[13px] leading-snug text-ink-secondary dark:text-ink-dark-secondary">
+          {description}
+        </span>
       </span>
     </label>
   );

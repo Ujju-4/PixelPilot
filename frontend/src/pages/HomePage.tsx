@@ -84,7 +84,7 @@ function EditorWorkspace({ uploadResult, originalPreviewUrl, onReset }: {
   };
 
   return (
-    <div className="flex w-full" style={{ height: 'calc(100vh - 44px)' }}>
+    <div className="flex w-full" style={{ height: 'calc(100vh - 64px)' }}>
       <ToolSidebar
         activeTool={activeTool}
         onSelect={setActiveTool}

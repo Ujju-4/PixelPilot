@@ -15,10 +15,10 @@ export function Input({ label, hint, className = '', ...rest }: InputProps) {
       )}
       <input
         className={[
-          'h-7 w-full rounded border border-border/50 dark:border-border-dark/50',
-          'bg-canvas dark:bg-canvas-dark px-2.5 text-xs text-ink dark:text-ink-dark',
+          'h-9 w-full rounded-lg border border-border/60 dark:border-border-dark/50',
+          'bg-canvas dark:bg-canvas-dark px-3 text-[13px] text-ink dark:text-ink-dark',
           'placeholder:text-ink-secondary/40 dark:placeholder:text-ink-dark-secondary/40',
-          'transition-colors focus:border-accent focus:outline-none',
+          'transition-colors hover:border-border dark:hover:border-border-dark focus:border-accent focus:outline-none',
           className,
         ].join(' ')}
         {...rest}

@@ -110,7 +110,7 @@ export function CanvasStage({
                 <ImageViewer
                   src={currentUrl}
                   alt={displayLabel}
-                  className="w-full max-h-[calc(100vh-140px)]"
+                  className="w-full max-h-[calc(100vh-160px)]"
                 />
               </motion.div>
             )}
