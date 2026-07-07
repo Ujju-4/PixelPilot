@@ -76,7 +76,7 @@ export function Dropzone({ onFileSelected, disabled = false }: DropzoneProps) {
         whileHover={disabled ? undefined : { scale: 1.005 }}
         whileTap={disabled ? undefined : { scale: 0.998 }}
         className={[
-          'flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-all duration-200',
+          'flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all duration-200',
           disabled ? 'cursor-not-allowed opacity-60' : '',
           isDragActive
             ? 'border-accent bg-accent-subtle dark:bg-accent-subtle-dark scale-[1.01]'
@@ -84,20 +84,20 @@ export function Dropzone({ onFileSelected, disabled = false }: DropzoneProps) {
         ].join(' ')}
       >
         <div className={[
-          'flex h-12 w-12 items-center justify-center rounded-2xl transition-colors duration-200',
+          'flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-200',
           isDragActive ? 'bg-accent/15' : 'bg-border/30 dark:bg-border-dark/30',
         ].join(' ')}>
-          <UploadCloudIcon className={`h-6 w-6 ${isDragActive ? 'text-accent' : 'text-ink-secondary dark:text-ink-dark-secondary'}`} />
+          <UploadCloudIcon className={`h-5 w-5 ${isDragActive ? 'text-accent' : 'text-ink-secondary dark:text-ink-dark-secondary'}`} />
         </div>
 
         <div>
-          <p className="font-semibold text-base">
+          <p className="font-semibold text-md">
             {isDragActive ? 'Release to upload' : 'Drop an image here'}
           </p>
           <p className="mt-1 text-sm text-ink-secondary dark:text-ink-dark-secondary">
             or <span className="font-medium text-accent">browse files</span> · paste from clipboard
           </p>
-          <p className="mt-2 text-xs text-ink-secondary/60 dark:text-ink-dark-secondary/60">
+          <p className="mt-1.5 text-xs text-ink-secondary/60 dark:text-ink-dark-secondary/60">
             PNG · JPG · WEBP · AVIF · HEIC — up to 25 MB
           </p>
         </div>

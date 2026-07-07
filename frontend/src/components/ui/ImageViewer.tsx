@@ -21,7 +21,7 @@ function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v));
 }
 
-function ZoomIcon({ className }: { className?: string }) {
+function ZoomInIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
       <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5" />
@@ -55,14 +55,23 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const lastPointer = useRef<{ x: number; y: number } | null>(null);
+
+  // Reset state when src changes
+  useEffect(() => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+    setImgLoaded(false);
+    setImgError(false);
+  }, [src]);
 
   const resetView = useCallback(() => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
   }, []);
 
-  // Clamp pan so image doesn't drift off screen.
   const clampedPan = useCallback(
     (nextZoom: number, nextPan: { x: number; y: number }) => {
       const container = containerRef.current;
@@ -90,7 +99,6 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
     [clampedPan],
   );
 
-  // Wheel zoom.
   const handleWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
       event.preventDefault();
@@ -100,7 +108,6 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
     [zoomBy],
   );
 
-  // Pointer pan.
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (zoom <= 1) return;
     setIsDragging(true);
@@ -121,7 +128,6 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
     lastPointer.current = null;
   };
 
-  // Keyboard controls.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -141,7 +147,6 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
     return () => container.removeEventListener('keydown', handleKey);
   }, [zoom, zoomBy, resetView, clampedPan]);
 
-  // Fullscreen API.
   const toggleFullscreen = useCallback(async () => {
     const el = containerRef.current;
     if (!el) return;
@@ -162,40 +167,67 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
     <div
       ref={containerRef}
       tabIndex={0}
-      aria-label={`Image viewer: ${alt}. Scroll to zoom, drag to pan, + / - to zoom, 0 to reset, F for fullscreen.`}
+      aria-label={`Image viewer: ${alt}. Scroll to zoom, drag to pan, + / - to zoom, 0 to reset.`}
       onWheel={handleWheel}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
       className={[
-        'group relative overflow-hidden rounded-lg border border-border dark:border-border-dark bg-surface dark:bg-surface-dark',
-        isDragging ? 'cursor-grabbing' : zoom > 1 ? 'cursor-grab' : 'cursor-zoom-in',
-        isFullscreen ? 'fixed inset-0 z-50 rounded-none border-none' : '',
+        'group relative flex items-center justify-center overflow-hidden rounded-lg',
+        isDragging ? 'cursor-grabbing' : zoom > 1 ? 'cursor-grab' : 'cursor-default',
+        isFullscreen ? 'fixed inset-0 z-50 rounded-none bg-black' : '',
         className ?? '',
       ].join(' ')}
+      style={isFullscreen ? undefined : undefined}
     >
-      {/* Image */}
-      <img
-        src={src}
-        alt={alt}
-        draggable={false}
-        style={{
-          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-          transformOrigin: 'center center',
-          transition: isDragging ? 'none' : 'transform 0.15s ease-out',
-          userSelect: 'none',
-          touchAction: 'none',
-        }}
-        className="block w-full h-full object-contain"
-      />
+      {/* Loading skeleton */}
+      {!imgLoaded && !imgError && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full border-2 border-white/10 border-t-white/40 animate-spin" />
+        </div>
+      )}
 
-      {/* Toolbar — visible on hover or focus */}
+      {/* Error state */}
+      {imgError && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <svg viewBox="0 0 24 24" fill="none" className="h-8 w-8 text-white/20" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M3 16l5-5 4 4 3-3 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+          </svg>
+          <p className="text-xs text-white/30">Failed to load image</p>
+        </div>
+      )}
+
+      {/* Image */}
+<img
+  src={src}
+  alt={alt}
+  draggable={false}
+  onLoad={() => setImgLoaded(true)}
+  onError={() => setImgError(true)}
+  style={{
+    transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+    transformOrigin: 'center center',
+    userSelect: 'none',
+    touchAction: 'none',
+    opacity: imgLoaded ? 1 : 0,
+    transition: isDragging
+      ? 'none'
+      : 'transform 0.15s ease-out, opacity 0.3s ease',
+    maxWidth: '100%',
+    maxHeight: '100%',
+  }}
+  className="block object-contain rounded-md shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.06)]"
+/>
+
+      {/* Controls overlay — on hover */}
       <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full border border-border dark:border-border-dark bg-surface/90 dark:bg-surface-dark/90 px-2 py-1 shadow-soft backdrop-blur-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-0.5 rounded-full border border-white/10 bg-black/60 px-2 py-1 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200"
           aria-label="Image viewer controls"
         >
           <button
@@ -203,15 +235,15 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
             onClick={() => zoomBy(-ZOOM_STEP)}
             disabled={zoom <= MIN_ZOOM}
             aria-label="Zoom out"
-            className="rounded-sm p-1 text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark disabled:opacity-30 transition-colors"
+            className="rounded-full p-1 text-white/50 hover:text-white disabled:opacity-20 transition-colors"
           >
-            <ZoomOutIcon className="h-4 w-4" />
+            <ZoomOutIcon className="h-3.5 w-3.5" />
           </button>
 
           <button
             type="button"
             onClick={resetView}
-            className="min-w-[3rem] rounded-sm px-1 py-0.5 font-mono text-xs text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark transition-colors"
+            className="min-w-[2.8rem] rounded-full px-1 py-0.5 font-mono text-[10px] text-white/50 hover:text-white transition-colors"
             aria-label="Reset zoom"
           >
             {Math.round(zoom * 100)}%
@@ -222,28 +254,28 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
             onClick={() => zoomBy(ZOOM_STEP)}
             disabled={zoom >= MAX_ZOOM}
             aria-label="Zoom in"
-            className="rounded-sm p-1 text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark disabled:opacity-30 transition-colors"
+            className="rounded-full p-1 text-white/50 hover:text-white disabled:opacity-20 transition-colors"
           >
-            <ZoomIcon className="h-4 w-4" />
+            <ZoomInIcon className="h-3.5 w-3.5" />
           </button>
 
-          <div className="mx-1 h-4 w-px bg-border dark:bg-border-dark" />
+          <div className="mx-1 h-3 w-px bg-white/10" />
 
           <button
             type="button"
             onClick={toggleFullscreen}
             aria-label={isFullscreen ? 'Exit fullscreen' : 'View fullscreen'}
             aria-pressed={isFullscreen}
-            className="rounded-sm p-1 text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark transition-colors"
+            className="rounded-full p-1 text-white/50 hover:text-white transition-colors"
           >
-            <FullscreenIcon className="h-4 w-4" />
+            <FullscreenIcon className="h-3.5 w-3.5" />
           </button>
         </motion.div>
       </AnimatePresence>
 
-      {/* Zoom level badge when zoomed in */}
+      {/* Zoom level badge */}
       {zoom > 1 && (
-        <div className="absolute top-2 right-2 rounded-full bg-ink/70 px-2 py-0.5 font-mono text-xs text-white pointer-events-none">
+        <div className="absolute top-3 right-3 rounded-full bg-black/60 border border-white/10 px-2 py-0.5 font-mono text-[10px] text-white/60 pointer-events-none backdrop-blur-sm">
           {Math.round(zoom * 100)}%
         </div>
       )}

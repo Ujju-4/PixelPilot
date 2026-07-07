@@ -4,7 +4,6 @@ import { compressImage, previewCompression } from '@/services/editsService';
 import type { OutputFormat, EditResult } from '@/types/edit';
 import { OptionGroup } from '@/components/ui/OptionGroup';
 import { Button } from '@/components/ui/Button';
-import { ResultCard } from '@/components/editor/ResultCard';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
 import { formatBytes } from '@/utils/fileValidation';
 import { ApiRequestError } from '@/services/apiClient';
@@ -44,7 +43,7 @@ export function CompressTool({ imageId, onEditResult }: { imageId: string; onEdi
 
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-medium uppercase tracking-wide text-ink-secondary dark:text-ink-dark-secondary">
+          <span className="text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
             Quality — {quality}
           </span>
           <span className="font-mono text-xs text-ink-secondary dark:text-ink-dark-secondary">
@@ -70,7 +69,9 @@ export function CompressTool({ imageId, onEditResult }: { imageId: string; onEdi
       </Button>
 
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
-      {mutation.isSuccess && <ResultCard asset={mutation.data.asset} />}
+      {mutation.isSuccess && (
+        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+      )}
     </div>
   );
 }

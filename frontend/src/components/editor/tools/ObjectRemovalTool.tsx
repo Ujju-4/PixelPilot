@@ -3,7 +3,6 @@ import { useMutation } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { removeObject } from '@/services/editsService';
 import { getImageFileUrl } from '@/services/imagesService';
-import { ResultCard } from '@/components/editor/ResultCard';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
 import { Button } from '@/components/ui/Button';
 import { ApiRequestError } from '@/services/apiClient';
@@ -144,7 +143,9 @@ export function ObjectRemovalTool({ imageId, onEditResult }: {
       )}
 
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => { mutation.reset(); clearPaint(); }} />}
-      {mutation.isSuccess && <ResultCard asset={mutation.data.asset} />}
+      {mutation.isSuccess && (
+        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+      )}
     </div>
   );
 }

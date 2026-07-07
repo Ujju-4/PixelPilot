@@ -1,5 +1,3 @@
-import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 import type { EditToolId, EditResult } from '@/types/edit';
 import {
   ResizeIcon, CompressIcon, ConvertIcon, UpscaleIcon, EnhanceIcon,
@@ -16,12 +14,13 @@ import { MagicExpandTool } from '@/components/editor/tools/MagicExpandTool';
 import { OcrTool } from '@/components/editor/tools/OcrTool';
 import { MetadataTool } from '@/components/editor/tools/MetadataTool';
 
-interface EditorPanelProps {
-  imageId: string;
-  onEditResult?: (result: EditResult) => void;
+export interface ToolDef {
+  id: EditToolId;
+  label: string;
+  icon: typeof ResizeIcon;
 }
 
-const TOOLS: { id: EditToolId; label: string; icon: typeof ResizeIcon }[] = [
+export const TOOLS: ToolDef[] = [
   { id: 'remove-background', label: 'Remove BG', icon: ScissorsIcon },
   { id: 'remove-object', label: 'Remove object', icon: BrushIcon },
   { id: 'expand', label: 'Magic Expand', icon: ExpandIcon },
@@ -34,82 +33,49 @@ const TOOLS: { id: EditToolId; label: string; icon: typeof ResizeIcon }[] = [
   { id: 'metadata', label: 'Metadata', icon: InfoIcon },
 ];
 
-export function EditorPanel({ imageId, onEditResult }: EditorPanelProps) {
-  const [activeTool, setActiveTool] = useState<EditToolId>('remove-background');
-  const scrollRef = useRef<HTMLDivElement>(null);
+// Groups tool ids for the sidebar. Purely presentational — doesn't affect the TOOLS list above.
+export const TOOL_CATEGORIES: { label: string; ids: EditToolId[] }[] = [
+  { label: 'AI Tools', ids: ['remove-background', 'remove-object', 'expand', 'upscale', 'enhance'] },
+  { label: 'Adjust', ids: ['resize', 'compress', 'convert'] },
+  { label: 'Info', ids: ['ocr', 'metadata'] },
+];
 
-  return (
-    <div className="w-full overflow-hidden rounded-2xl border border-border/60 dark:border-border-dark/60 bg-surface dark:bg-surface-dark shadow-soft">
+// Tools that produce a new image asset (and therefore have a shared Export block after them).
+// OCR and Metadata just display extracted info, so they're excluded.
+export const ASSET_TOOL_IDS: EditToolId[] = [
+  'remove-background', 'remove-object', 'expand', 'upscale', 'enhance', 'resize', 'compress', 'convert',
+];
 
-      {/* Tab bar — pill tabs, hidden scrollbar, gradient edge fade */}
-      <div className="relative border-b border-border/50 dark:border-border-dark/50">
+interface ToolContentProps {
+  activeTool: EditToolId;
+  imageId: string;
+  onEditResult?: (result: EditResult) => void;
+}
 
-        {/* Left fade */}
-        <div
-          className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-10
-            bg-gradient-to-r from-surface dark:from-surface-dark to-transparent"
-          aria-hidden="true"
-        />
-        {/* Right fade */}
-        <div
-          className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10
-            bg-gradient-to-l from-surface dark:from-surface-dark to-transparent"
-          aria-hidden="true"
-        />
-
-        <div
-          ref={scrollRef}
-          role="tablist"
-          aria-label="Editing tools"
-          className="flex items-center gap-1 overflow-x-auto scrollbar-hide px-2 py-2"
-        >
-          {TOOLS.map((tool) => {
-            const Icon = tool.icon;
-            const isActive = tool.id === activeTool;
-
-            return (
-              <button
-                key={tool.id}
-                role="tab"
-                type="button"
-                aria-selected={isActive}
-                onClick={() => setActiveTool(tool.id)}
-                className={[
-                  'relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-150 select-none',
-                  isActive
-                    ? 'bg-accent text-white shadow-sm'
-                    : 'text-ink-secondary hover:text-ink hover:bg-canvas dark:text-ink-dark-secondary dark:hover:text-ink-dark dark:hover:bg-canvas-dark',
-                ].join(' ')}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="tab-active-bg"
-                    className="absolute inset-0 rounded-full bg-accent"
-                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                    style={{ zIndex: -1 }}
-                  />
-                )}
-                <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span>{tool.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Tool content area */}
-      <div className="p-4">
-        {activeTool === 'remove-background' && <BackgroundRemovalTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'remove-object' && <ObjectRemovalTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'expand' && <MagicExpandTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'upscale' && <UpscaleTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'enhance' && <EnhanceTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'resize' && <ResizeTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'compress' && <CompressTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'convert' && <ConvertTool imageId={imageId} onEditResult={onEditResult} />}
-        {activeTool === 'ocr' && <OcrTool imageId={imageId} />}
-        {activeTool === 'metadata' && <MetadataTool imageId={imageId} />}
-      </div>
-    </div>
-  );
+/** Renders the settings/controls for whichever tool is currently active. */
+export function ToolContent({ activeTool, imageId, onEditResult }: ToolContentProps) {
+  switch (activeTool) {
+    case 'remove-background':
+      return <BackgroundRemovalTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'remove-object':
+      return <ObjectRemovalTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'expand':
+      return <MagicExpandTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'upscale':
+      return <UpscaleTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'enhance':
+      return <EnhanceTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'resize':
+      return <ResizeTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'compress':
+      return <CompressTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'convert':
+      return <ConvertTool imageId={imageId} onEditResult={onEditResult} />;
+    case 'ocr':
+      return <OcrTool imageId={imageId} />;
+    case 'metadata':
+      return <MetadataTool imageId={imageId} />;
+    default:
+      return null;
+  }
 }

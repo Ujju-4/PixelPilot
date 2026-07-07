@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Dropzone } from '@/components/upload/Dropzone';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { AnalysisSkeleton } from '@/components/analysis/AnalysisSkeleton';
-import { AnalysisResultsPanel } from '@/components/analysis/AnalysisResultsPanel';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
-import { BeforeAfterSlider } from '@/components/ui/BeforeAfterSlider';
-import { EditorPanel } from '@/components/editor/EditorPanel';
+import { ToolSidebar } from '@/components/editor/ToolSidebar';
+import { ContextPanel } from '@/components/editor/ContextPanel';
+import { CanvasStage } from '@/components/editor/CanvasStage';
 import { UndoProvider, useUndo } from '@/contexts/UndoContext';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
@@ -15,7 +15,7 @@ import { getImageFileUrl } from '@/services/imagesService';
 import { addEditedAssetLocal } from '@/services/localHistory';
 import { ApiRequestError } from '@/services/apiClient';
 import type { UploadImageResponse } from '@/types/image';
-import type { EditResult } from '@/types/edit';
+import type { EditResult, EditToolId } from '@/types/edit';
 
 function EditorWorkspace({ uploadResult, originalPreviewUrl, onReset }: {
   uploadResult: UploadImageResponse;
@@ -25,9 +25,11 @@ function EditorWorkspace({ uploadResult, originalPreviewUrl, onReset }: {
   const { current, canUndo, undo, push } = useUndo();
   const { open: openPalette, registerActions, clearActions } = useCommandPalette();
   const [showComparison, setShowComparison] = useState(false);
+  const [activeTool, setActiveTool] = useState<EditToolId | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const activeAssetId = current?.id ?? uploadResult.asset.id;
-  const editedPreviewUrl = current ? getImageFileUrl(current.id) : null;
+  const currentPreviewUrl = current ? getImageFileUrl(current.id) : originalPreviewUrl;
 
   useKeyboardShortcuts({
     'mod+z': canUndo ? undo : undefined,
@@ -71,85 +73,43 @@ function EditorWorkspace({ uploadResult, originalPreviewUrl, onReset }: {
   }, [registerActions, clearActions, canUndo, undo, onReset]);
 
   const handleEditResult = (result: EditResult) => {
-  push(result.asset);
+    push(result.asset);
 
-  addEditedAssetLocal(
-    uploadResult.asset.id,
-    result.asset,
-  );
+    addEditedAssetLocal(
+      uploadResult.asset.id,
+      result.asset,
+    );
 
-  setShowComparison(false);
-};
+    setShowComparison(false);
+  };
 
   return (
-    <div className="flex w-full max-w-4xl flex-col gap-4">
-      <AnalysisResultsPanel result={uploadResult} previewUrl={originalPreviewUrl} />
+    <div className="flex w-full" style={{ height: 'calc(100vh - 44px)' }}>
+      <ToolSidebar
+        activeTool={activeTool}
+        onSelect={setActiveTool}
+        collapsed={sidebarCollapsed}
+        onToggleCollapsed={() => setSidebarCollapsed((v) => !v)}
+      />
 
-      {/* Undo bar */}
-      <AnimatePresence>
-        {canUndo && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="flex items-center justify-between rounded-2xl border border-border/50 dark:border-border-dark/50 bg-surface dark:bg-surface-dark px-4 py-2.5">
-              <p className="text-sm">
-                <span className="font-semibold">{current?.operation ?? 'edit'}</span>
-                <span className="ml-1 text-ink-secondary dark:text-ink-dark-secondary">applied</span>
-              </p>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowComparison((v) => !v)}
-                  className="text-sm text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark transition-colors"
-                >
-                  {showComparison ? 'Hide comparison' : 'Compare'}
-                </button>
-                <button
-                  type="button"
-                  onClick={undo}
-                  className="text-sm font-medium text-accent hover:opacity-75 transition-opacity"
-                >
-                  ⌘Z Undo
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <CanvasStage
+        originalUrl={originalPreviewUrl}
+        currentUrl={currentPreviewUrl}
+        currentLabel={current?.operation ?? uploadResult.asset.originalName}
+        showComparison={showComparison}
+        onToggleComparison={() => setShowComparison((v) => !v)}
+        canUndo={canUndo}
+        onUndo={undo}
+        onReset={onReset}
+      />
 
-      {/* Before/After slider */}
-      <AnimatePresence>
-        {showComparison && editedPreviewUrl && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <BeforeAfterSlider
-              beforeUrl={originalPreviewUrl}
-              afterUrl={editedPreviewUrl}
-              beforeLabel="Original"
-              afterLabel={current?.operation ?? 'Edited'}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <EditorPanel imageId={activeAssetId} onEditResult={handleEditResult} />
-
-      <div className="flex items-center justify-end text-xs text-ink-secondary/60 dark:text-ink-dark-secondary/60">
-        <button
-          type="button"
-          onClick={onReset}
-          className="rounded-full border border-border/50 dark:border-border-dark/50 px-3 py-1 transition-colors hover:border-border dark:hover:border-border-dark"
-        >
-          Upload new image
-        </button>
-      </div>
+      <ContextPanel
+        activeTool={activeTool}
+        imageId={activeAssetId}
+        onEditResult={handleEditResult}
+        uploadResult={uploadResult}
+        exportAsset={current}
+      />
     </div>
   );
 }
@@ -181,24 +141,38 @@ export function HomePage() {
       ? mutation.error.message
       : mutation.error ? 'Something went wrong. Please try again.' : null;
 
+  // Post-upload: full-bleed 3-column editor workspace, no page padding/max-width.
+  if (mutation.isSuccess && previewUrl) {
+    return (
+      <UndoProvider initial={mutation.data.asset}>
+        <EditorWorkspace
+          uploadResult={mutation.data}
+          originalPreviewUrl={previewUrl}
+          onReset={handleReset}
+        />
+      </UndoProvider>
+    );
+  }
+
+  // Pre-upload: centered hero + dropzone.
   return (
-    <div className="mx-auto flex max-w-4xl flex-col items-center px-4 py-12">
+    <div className="mx-auto flex max-w-4xl flex-col items-center px-4 py-8">
       {/* Hero — only shown before upload */}
       <AnimatePresence>
-        {!mutation.isSuccess && !mutation.isPending && (
+        {!mutation.isPending && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="mb-8 flex flex-col items-center text-center"
+            className="mb-6 flex flex-col items-center text-center"
           >
-            <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight sm:text-[32px]">
               Transform any image
               <br />
               <span className="text-ink-secondary dark:text-ink-dark-secondary">in seconds with AI.</span>
             </h1>
-            <p className="mt-4 max-w-md text-base text-ink-secondary dark:text-ink-dark-secondary">
+            <p className="mt-3 max-w-md text-base text-ink-secondary dark:text-ink-dark-secondary">
               Upload an image. PixelPilot AI analyses it and recommends
               the right edits — no guesswork, no wall of buttons.
             </p>
@@ -208,12 +182,12 @@ export function HomePage() {
 
       {/* Upload zone */}
       <div className="w-full max-w-lg">
-        {!mutation.isPending && !mutation.isSuccess && (
+        {!mutation.isPending && (
           <Dropzone onFileSelected={handleFileSelected} />
         )}
 
         {mutation.isPending && (
-          <div className="flex flex-col gap-4 rounded-2xl border border-border/50 dark:border-border-dark/50 bg-surface dark:bg-surface-dark p-6">
+          <div className="flex flex-col gap-3 rounded-xl border border-border/50 dark:border-border-dark/50 bg-surface dark:bg-surface-dark p-5">
             {previewUrl && (
               <img
                 src={previewUrl}
@@ -238,24 +212,6 @@ export function HomePage() {
         <div className="mt-6 w-full max-w-4xl">
           <AnalysisSkeleton />
         </div>
-      )}
-
-      {/* Results + editor */}
-      {mutation.isSuccess && previewUrl && (
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="mt-6 flex w-full max-w-4xl flex-col items-center gap-4"
-        >
-          <UndoProvider initial={mutation.data.asset}>
-            <EditorWorkspace
-              uploadResult={mutation.data}
-              originalPreviewUrl={previewUrl}
-              onReset={handleReset}
-            />
-          </UndoProvider>
-        </motion.div>
       )}
     </div>
   );

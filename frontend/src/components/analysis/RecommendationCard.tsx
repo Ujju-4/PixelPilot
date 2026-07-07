@@ -4,16 +4,16 @@ import { AlertTriangleIcon, CheckCircleIcon, InfoCircleIcon } from '@/components
 
 const SEVERITY_STYLES: Record<Recommendation['severity'], { wrapper: string; icon: JSX.Element }> = {
   important: {
-    wrapper: 'border-danger/20 bg-danger-subtle dark:border-danger/15 dark:bg-danger/5',
-    icon: <AlertTriangleIcon className="h-3.5 w-3.5 text-danger" />,
+    wrapper: 'border-danger/15 bg-danger-subtle dark:border-danger/10 dark:bg-danger/5',
+    icon: <AlertTriangleIcon className="h-3 w-3 text-danger shrink-0" />,
   },
   suggested: {
-    wrapper: 'border-accent/20 bg-accent-subtle dark:border-accent/15 dark:bg-accent-subtle-dark',
-    icon: <InfoCircleIcon className="h-3.5 w-3.5 text-accent" />,
+    wrapper: 'border-accent/15 bg-accent-subtle dark:border-accent/10 dark:bg-accent-subtle-dark',
+    icon: <InfoCircleIcon className="h-3 w-3 text-accent shrink-0" />,
   },
   info: {
-    wrapper: 'border-border/50 dark:border-border-dark/50 bg-canvas dark:bg-canvas-dark',
-    icon: <CheckCircleIcon className="h-3.5 w-3.5 text-success" />,
+    wrapper: 'border-border/40 dark:border-border-dark/40 bg-canvas dark:bg-canvas-dark',
+    icon: <CheckCircleIcon className="h-3 w-3 text-success shrink-0" />,
   },
 };
 
@@ -22,15 +22,15 @@ export function RecommendationCard({ recommendation, index = 0 }: { recommendati
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 4 }}
+      initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay: index * 0.04 }}
-      className={`flex gap-2.5 rounded-xl border px-3 py-2.5 text-left ${style.wrapper}`}
+      transition={{ duration: 0.18, delay: index * 0.04 }}
+      className={`flex gap-2 rounded border px-2.5 py-2 text-left ${style.wrapper}`}
     >
-      <div className="mt-0.5 shrink-0">{style.icon}</div>
-      <div>
-        <p className="text-sm font-semibold leading-snug">{recommendation.title}</p>
-        <p className="mt-0.5 text-xs leading-relaxed text-ink-secondary dark:text-ink-dark-secondary">
+      <div className="mt-0.5">{style.icon}</div>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold leading-snug text-ink dark:text-ink-dark">{recommendation.title}</p>
+        <p className="mt-0.5 text-[11px] leading-relaxed text-ink-secondary dark:text-ink-dark-secondary">
           {recommendation.description}
         </p>
       </div>

@@ -4,7 +4,6 @@ import { upscaleImage } from '@/services/editsService';
 import type { UpscaleFactor, EditResult } from '@/types/edit';
 import { OptionGroup } from '@/components/ui/OptionGroup';
 import { Button } from '@/components/ui/Button';
-import { ResultCard } from '@/components/editor/ResultCard';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
 import { ApiRequestError } from '@/services/apiClient';
 
@@ -29,7 +28,9 @@ export function UpscaleTool({ imageId, onEditResult }: { imageId: string; onEdit
         Upscale {factor}×
       </Button>
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
-      {mutation.isSuccess && <ResultCard asset={mutation.data.asset} />}
+      {mutation.isSuccess && (
+        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+      )}
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { magicExpand } from '@/services/editsService';
 import type { MagicExpandOptions, EditResult } from '@/types/edit';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { ResultCard } from '@/components/editor/ResultCard';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
 import { ApiRequestError } from '@/services/apiClient';
 
@@ -95,7 +94,9 @@ export function MagicExpandTool({ imageId, onEditResult }: {
       )}
 
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
-      {mutation.isSuccess && <ResultCard asset={mutation.data.asset} />}
+      {mutation.isSuccess && (
+        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+      )}
     </div>
   );
 }

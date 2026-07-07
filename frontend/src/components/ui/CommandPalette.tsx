@@ -89,11 +89,11 @@ export function CommandPalette() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: -8 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="fixed left-1/2 top-[15vh] z-50 w-full max-w-xl -translate-x-1/2 overflow-hidden rounded-xl border border-border dark:border-border-dark bg-surface dark:bg-surface-dark shadow-soft"
+            className="fixed left-1/2 top-[15vh] z-50 w-full max-w-lg -translate-x-1/2 overflow-hidden rounded-lg border border-border dark:border-border-dark bg-surface dark:bg-surface-dark shadow-soft"
             onKeyDown={handleKeyDown}
           >
             {/* Search input */}
-            <div className="flex items-center gap-2 border-b border-border dark:border-border-dark px-3 py-2">
+            <div className="flex items-center gap-2 border-b border-border dark:border-border-dark px-3 py-1.5">
               <svg className="h-4 w-4 shrink-0 text-ink-secondary dark:text-ink-dark-secondary" viewBox="0 0 20 20" fill="none">
                 <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M13 13l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -119,7 +119,7 @@ export function CommandPalette() {
             <ul
               role="listbox"
               aria-label="Actions"
-              className="max-h-72 overflow-y-auto py-1"
+              className="max-h-64 overflow-y-auto py-0.5"
             >
               {filtered.length === 0 && (
                 <li className="px-3 py-4 text-center text-sm text-ink-secondary dark:text-ink-dark-secondary">
@@ -135,7 +135,7 @@ export function CommandPalette() {
                   onMouseEnter={() => setActiveIndex(i)}
                   onClick={() => { action.onSelect(); close(); }}
                   className={[
-                    'flex cursor-pointer items-center justify-between gap-2 px-3 py-2 text-sm transition-colors',
+                    'flex cursor-pointer items-center justify-between gap-2 px-3 py-1.5 text-sm transition-colors',
                     i === activeIndex
                       ? 'bg-canvas dark:bg-canvas-dark'
                       : '',
@@ -163,7 +163,7 @@ export function CommandPalette() {
             </ul>
 
             {/* Footer */}
-            <div className="flex items-center justify-between border-t border-border dark:border-border-dark px-3 py-1.5 text-xs text-ink-secondary dark:text-ink-dark-secondary">
+            <div className="flex items-center justify-between border-t border-border dark:border-border-dark px-3 py-1 text-xs text-ink-secondary dark:text-ink-dark-secondary">
               <span>↑↓ navigate</span>
               <span>↵ select</span>
             </div>

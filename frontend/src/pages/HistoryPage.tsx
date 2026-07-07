@@ -155,8 +155,8 @@ export function HistoryPage() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="mb-8 flex items-end justify-between">
+    <div className="mx-auto max-w-3xl px-4 py-8">
+      <div className="mb-6 flex items-end justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">History</h1>
           <p className="mt-1 text-sm text-ink-secondary dark:text-ink-dark-secondary">
@@ -173,7 +173,7 @@ export function HistoryPage() {
       {isLoading && (
         <div className="flex flex-col gap-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-2xl border border-border/40 dark:border-border-dark/40 bg-surface dark:bg-surface-dark" />
+            <div key={i} className="h-24 animate-pulse rounded-xl border border-border/40 dark:border-border-dark/40 bg-surface dark:bg-surface-dark" />
           ))}
         </div>
       )}
@@ -184,7 +184,7 @@ export function HistoryPage() {
 
       {entries && entries.length === 0 && (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border/60 dark:border-border-dark/60 py-16 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/50 dark:border-border-dark/50 bg-canvas dark:bg-canvas-dark text-2xl">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 dark:border-border-dark/50 bg-canvas dark:bg-canvas-dark text-xl">
             📁
           </div>
           <div>

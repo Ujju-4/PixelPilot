@@ -4,7 +4,6 @@ import type { ImageAsset } from '@/types/image';
 import { getImageFileUrl } from '@/services/imagesService';
 import { formatBytes } from '@/utils/fileValidation';
 import { DownloadIcon } from '@/components/icons/EditorIcons';
-import { ImageViewer } from '@/components/ui/ImageViewer';
 
 interface ResultCardProps {
   asset: ImageAsset;
@@ -13,7 +12,6 @@ interface ResultCardProps {
 function buildDownloadFilename(original: string, editedName: string): string {
   const trimmed = editedName.trim();
   if (!trimmed) return original;
-  // If the user didn't type an extension, carry one over from the stored asset format.
   if (!trimmed.includes('.')) {
     const ext = original.split('.').pop() ?? '';
     return ext ? `${trimmed}.${ext}` : trimmed;
@@ -21,83 +19,75 @@ function buildDownloadFilename(original: string, editedName: string): string {
   return trimmed;
 }
 
+function cleanDisplayName(name: string): string {
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[._-]?/i;
+  return uuidPattern.test(name) ? name.replace(uuidPattern, '') || 'result' : name;
+}
+
 export function ResultCard({ asset }: ResultCardProps) {
   const previewUrl = getImageFileUrl(asset.id);
-  const [filename, setFilename] = useState(asset.originalName);
-  const [showViewer, setShowViewer] = useState(false);
+  const cleanName = cleanDisplayName(asset.originalName);
+  const [filename, setFilename] = useState(cleanName);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const downloadFilename = buildDownloadFilename(asset.originalName, filename);
+  const downloadFilename = buildDownloadFilename(cleanName, filename);
   const downloadUrl = `${previewUrl}?download=true`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col gap-2 rounded-lg border border-success/30 bg-success-subtle dark:border-success/20 dark:bg-success/10 p-2"
+      className="flex flex-col gap-2 rounded border border-success/20 bg-success-subtle dark:border-success/15 dark:bg-success/8 p-2.5"
     >
-      {/* Preview toggle */}
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setShowViewer((v) => !v)}
-          className="shrink-0 overflow-hidden rounded-DEFAULT border border-border dark:border-border-dark"
-          aria-label="Toggle image preview"
-        >
-          <img
-            src={previewUrl}
-            alt={`Result: ${asset.originalName}`}
-            className="h-16 w-16 object-cover"
-          />
-        </button>
-
-        <div className="flex flex-1 flex-col gap-1 min-w-0">
-          <p className="text-xs font-medium text-success">Edit applied</p>
-          <p className="font-mono text-xs text-ink-secondary dark:text-ink-dark-secondary">
-            {asset.format.toUpperCase()} · {formatBytes(asset.sizeBytes)}
-            {asset.operation && ` · ${asset.operation}`}
-          </p>
-
-          {/* Filename editor */}
-          <label className="flex items-center gap-1 text-xs">
-            <span className="shrink-0 text-ink-secondary dark:text-ink-dark-secondary">Save as:</span>
-            <input
-              ref={inputRef}
-              type="text"
-              value={filename}
-              onChange={(e) => setFilename(e.target.value)}
-              onFocus={(e) => {
-                // Select the name portion (before the extension) on focus.
-                const dotIdx = e.target.value.lastIndexOf('.');
-                if (dotIdx > 0) e.target.setSelectionRange(0, dotIdx);
-              }}
-              aria-label="Download filename"
-              className="min-w-0 flex-1 rounded-sm border border-border dark:border-border-dark bg-surface dark:bg-surface-dark px-1.5 py-0.5 font-mono text-xs focus:border-accent focus:outline-none"
-            />
-          </label>
-        </div>
-
-        {/* Download button */}
-        <a
-          href={downloadUrl}
-          download={downloadFilename}
-          className="shrink-0 inline-flex items-center justify-center gap-1.5 rounded-full bg-ink dark:bg-ink-dark px-4 py-1.5 text-sm font-medium text-canvas dark:text-canvas-dark shadow-soft transition-all hover:opacity-90 hover:shadow-card"
-          aria-label={`Download ${downloadFilename}`}
-        >
-          <DownloadIcon className="h-4 w-4" />
-          <span className="hidden sm:inline">Download</span>
-        </a>
+      {/* Status row */}
+      <div className="flex items-center gap-1.5">
+        <span className="h-1.5 w-1.5 rounded-full bg-success shrink-0" />
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-success">Ready to export</p>
       </div>
 
-      {/* Expandable image viewer with zoom/pan/fullscreen */}
-      {showViewer && (
-        <ImageViewer
-          src={previewUrl}
-          alt={`Result preview: ${downloadFilename}`}
-          className="max-h-72"
+      {/* Meta */}
+      <div className="flex items-center gap-1.5 text-[10px] font-mono text-ink-secondary dark:text-ink-dark-secondary">
+        <span>{asset.format.toUpperCase()}</span>
+        <span className="text-ink-tertiary dark:text-ink-dark-tertiary">·</span>
+        <span>{formatBytes(asset.sizeBytes)}</span>
+        {asset.operation && (
+          <>
+            <span className="text-ink-tertiary dark:text-ink-dark-tertiary">·</span>
+            <span>{asset.operation}</span>
+          </>
+        )}
+      </div>
+
+      {/* Filename editor */}
+      <div className="flex flex-col gap-1">
+        <label className="text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
+          Filename
+        </label>
+        <input
+          ref={inputRef}
+          type="text"
+          value={filename}
+          onChange={(e) => setFilename(e.target.value)}
+          onFocus={(e) => {
+            const dotIdx = e.target.value.lastIndexOf('.');
+            if (dotIdx > 0) e.target.setSelectionRange(0, dotIdx);
+          }}
+          aria-label="Download filename"
+          className="w-full rounded border border-border/50 dark:border-border-dark/50 bg-surface dark:bg-surface-dark px-2 py-1 font-mono text-[11px] text-ink dark:text-ink-dark focus:border-accent focus:outline-none transition-colors"
         />
-      )}
+      </div>
+
+      {/* Download button */}
+      <a
+        href={downloadUrl}
+        download={downloadFilename}
+        className="inline-flex w-full items-center justify-center gap-1.5 rounded bg-ink dark:bg-ink-dark px-3 py-1.5 text-xs font-semibold text-canvas dark:text-canvas-dark shadow-sm transition-all hover:opacity-85"
+        aria-label={`Download ${downloadFilename}`}
+      >
+        <DownloadIcon className="h-3.5 w-3.5" />
+        Download
+      </a>
     </motion.div>
   );
 }

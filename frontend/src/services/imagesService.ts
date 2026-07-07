@@ -1,9 +1,8 @@
 import { apiUpload } from '@/services/apiClient';
 import type { UploadImageResponse } from '@/types/image';
 
-const API_BASE_URL = import.meta.env.PROD
-  ? 'https://backend-production-18f78.up.railway.app/api'
-  : 'http://localhost:4000/api';
+const API_BASE_URL =
+  'https://backend-production-18f78.up.railway.app/api';
 
 export function uploadImage(
   file: File,

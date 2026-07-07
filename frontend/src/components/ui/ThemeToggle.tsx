@@ -2,9 +2,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';
 import { SunIcon, MoonIcon } from '@/components/icons/ThemeIcons';
 
-const TRACK_WIDTH = 52;
-const TRACK_HEIGHT = 28;
-const KNOB_SIZE = 22;
+const TRACK_WIDTH = 44;
+const TRACK_HEIGHT = 24;
+const KNOB_SIZE = 18;
 const PADDING = 3;
 
 export function ThemeToggle() {
@@ -31,24 +31,24 @@ export function ThemeToggle() {
       {/* stars — fade in for dark mode */}
       <span
         aria-hidden="true"
-        style={{ left: 8, top: 6, width: 3, height: 3 }}
+        style={{ left: 6, top: 4, width: 2, height: 2 }}
         className={`pointer-events-none absolute rounded-full bg-white transition-opacity duration-300 ${isDark ? 'opacity-90' : 'opacity-0'}`}
       />
       <span
         aria-hidden="true"
-        style={{ left: 16, top: 16, width: 2, height: 2 }}
+        style={{ left: 12, top: 14, width: 2, height: 2 }}
         className={`pointer-events-none absolute rounded-full bg-white transition-opacity delay-75 duration-300 ${isDark ? 'opacity-70' : 'opacity-0'}`}
       />
       <span
         aria-hidden="true"
-        style={{ left: 24, top: 8, width: 2, height: 2 }}
+        style={{ left: 20, top: 6, width: 1.5, height: 1.5 }}
         className={`pointer-events-none absolute rounded-full bg-white transition-opacity delay-150 duration-300 ${isDark ? 'opacity-60' : 'opacity-0'}`}
       />
 
       {/* cloud — fades in for light mode */}
       <span
         aria-hidden="true"
-        style={{ right: 6, top: 8, width: 10, height: 5 }}
+        style={{ right: 5, top: 6, width: 8, height: 4 }}
         className={`pointer-events-none absolute rounded-full bg-white/80 transition-opacity duration-300 ${isDark ? 'opacity-0' : 'opacity-100'}`}
       />
 
@@ -69,7 +69,7 @@ export function ThemeToggle() {
               transition={{ duration: 0.2 }}
               className="flex items-center justify-center text-[#1c1e42]"
             >
-              <MoonIcon className="h-3.5 w-3.5" />
+              <MoonIcon className="h-3 w-3" />
             </motion.span>
           ) : (
             <motion.span
@@ -80,7 +80,7 @@ export function ThemeToggle() {
               transition={{ duration: 0.2 }}
               className="flex items-center justify-center text-amber-500"
             >
-              <SunIcon className="h-3.5 w-3.5" />
+              <SunIcon className="h-3 w-3" />
             </motion.span>
           )}
         </AnimatePresence>

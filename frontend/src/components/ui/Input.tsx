@@ -9,22 +9,22 @@ export function Input({ label, hint, className = '', ...rest }: InputProps) {
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <span className="text-xs font-medium uppercase tracking-wide text-ink-secondary dark:text-ink-dark-secondary">
+        <span className="text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
           {label}
         </span>
       )}
       <input
         className={[
-          'h-9 w-full rounded-xl border border-border/60 dark:border-border-dark/60',
-          'bg-canvas dark:bg-canvas-dark px-3 text-sm',
-          'placeholder:text-ink-secondary/50 dark:placeholder:text-ink-dark-secondary/50',
-          'transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20',
+          'h-7 w-full rounded border border-border/50 dark:border-border-dark/50',
+          'bg-canvas dark:bg-canvas-dark px-2.5 text-xs text-ink dark:text-ink-dark',
+          'placeholder:text-ink-secondary/40 dark:placeholder:text-ink-dark-secondary/40',
+          'transition-colors focus:border-accent focus:outline-none',
           className,
         ].join(' ')}
         {...rest}
       />
       {hint && (
-        <span className="text-xs text-ink-secondary dark:text-ink-dark-secondary">{hint}</span>
+        <span className="text-[11px] text-ink-secondary dark:text-ink-dark-secondary">{hint}</span>
       )}
     </div>
   );

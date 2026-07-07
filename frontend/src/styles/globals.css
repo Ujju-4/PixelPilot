@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,6 +7,7 @@
 @layer base {
   html {
     @apply antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   body {
@@ -12,22 +15,55 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-canvas dark:ring-offset-canvas-dark;
+    @apply outline-none ring-2 ring-accent ring-offset-1 ring-offset-canvas dark:ring-offset-canvas-dark;
   }
 
   ::selection {
     @apply bg-accent-subtle dark:bg-accent-subtle-dark;
   }
+
+  /* Global modern scrollbar — hidden until hovered */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  *:hover {
+    scrollbar-color: rgba(113, 113, 122, 0.3) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 99px;
+  }
+  *:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(113, 113, 122, 0.3);
+  }
 }
 
 @layer utilities {
-  /* Hides the scrollbar while keeping scroll functionality */
+  /* Legacy helper — kept for backward compat */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Canvas grid dot pattern */
+  .canvas-grid {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .canvas-grid-light {
+    background-image: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }
 

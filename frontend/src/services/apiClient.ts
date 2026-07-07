@@ -12,9 +12,8 @@ export class ApiRequestError extends Error {
   }
 }
 
-const BASE_URL = import.meta.env.PROD
-  ? 'https://backend-production-18f78.up.railway.app/api'
-  : 'http://localhost:4000/api';
+const BASE_URL =
+  'https://backend-production-18f78.up.railway.app/api';
 
 export async function apiGet<T>(path: string): Promise<T> {
   const response = await fetch(`${BASE_URL}${path}`, {

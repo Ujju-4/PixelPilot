@@ -19,8 +19,6 @@ export function useImageUpload(): UseImageUploadResult {
     },
 
     onSuccess: (result) => {
-      console.log('UPLOAD SUCCESS', result);
-
       addHistoryEntry({
         id: result.asset.id,
         name: result.asset.originalName,
@@ -28,11 +26,6 @@ export function useImageUpload(): UseImageUploadResult {
         uploadedAsset: result.asset,
         editedAssets: [],
       });
-
-      console.log(
-        'LOCAL STORAGE:',
-        localStorage.getItem('pixelpilot-history'),
-      );
     },
   });
 

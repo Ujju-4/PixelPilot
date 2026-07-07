@@ -69,7 +69,7 @@ export function BeforeAfterSlider({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleMouseUp}
-      className="relative w-full cursor-col-resize overflow-hidden rounded-lg border border-border dark:border-border-dark select-none touch-none"
+      className="relative w-full cursor-col-resize overflow-hidden rounded-lg border border-white/10 select-none touch-none"
     >
       {/* After image (bottom layer, full width) */}
       <img
