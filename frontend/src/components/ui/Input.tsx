@@ -5,6 +5,9 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: string;
 }
 
+// Underline field, not a boxed rectangle — reads as "editable text" and is
+// visually distinct from buttons (filled/outlined) and segmented controls
+// (a track), per the component-differentiation requirement.
 export function Input({ label, hint, className = '', ...rest }: InputProps) {
   return (
     <div className="flex flex-col gap-1">
@@ -15,10 +18,11 @@ export function Input({ label, hint, className = '', ...rest }: InputProps) {
       )}
       <input
         className={[
-          'h-9 w-full rounded-lg border border-border/60 dark:border-border-dark/50',
-          'bg-canvas dark:bg-canvas-dark px-3 text-[13px] text-ink dark:text-ink-dark',
+          'h-8 w-full border-0 border-b bg-transparent px-0 text-[13px] text-ink dark:text-ink-dark',
+          'border-border dark:border-border-dark',
           'placeholder:text-ink-secondary/40 dark:placeholder:text-ink-dark-secondary/40',
-          'transition-colors hover:border-border dark:hover:border-border-dark focus:border-accent focus:outline-none',
+          'transition-colors hover:border-ink-tertiary dark:hover:border-ink-dark-tertiary',
+          'focus:border-accent focus:outline-none',
           className,
         ].join(' ')}
         {...rest}

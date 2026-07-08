@@ -70,18 +70,6 @@ export default {
         '2xl': '20px',
         full: '9999px',
       },
-      spacing: {
-        '0.5': '4px',
-        '1': '8px',
-        '1.5': '12px',
-        '2': '16px',
-        '3': '24px',
-        '4': '32px',
-        '5': '40px',
-        '6': '48px',
-        '8': '64px',
-        '10': '80px',
-      },
       boxShadow: {
         soft: '0 1px 3px rgba(15, 15, 16, 0.06), 0 4px 16px -4px rgba(15, 15, 16, 0.10)',
         card: '0 0 0 1px rgba(15, 15, 16, 0.06), 0 2px 8px -2px rgba(15, 15, 16, 0.08)',

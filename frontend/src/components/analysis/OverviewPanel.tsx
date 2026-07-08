@@ -36,16 +36,16 @@ export function OverviewPanel({ result }: { result: UploadImageResponse }) {
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-0"
     >
       {/* Image identity */}
-      <div>
+      <div className="pb-4">
         <div className="flex items-start gap-1.5">
           <h2 className="text-sm font-semibold text-ink dark:text-ink-dark break-all leading-snug flex-1 min-w-0">
             {displayName}
           </h2>
           {typeLabel && (
-            <span className="shrink-0 inline-flex items-center rounded border border-border/50 dark:border-border-dark/50 bg-canvas dark:bg-canvas-dark px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-ink-secondary dark:text-ink-dark-secondary">
+            <span className="shrink-0 text-[9px] font-medium uppercase tracking-wider text-ink-tertiary dark:text-ink-dark-tertiary pt-0.5">
               {typeLabel}
             </span>
           )}
@@ -57,11 +57,11 @@ export function OverviewPanel({ result }: { result: UploadImageResponse }) {
       </div>
 
       {/* Property grid */}
-      <div>
-        <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
+      <div className="border-t border-border/50 pt-4 pb-4 dark:border-border-dark/40">
+        <p className="mb-2 text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
           Properties
         </p>
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
           <StatChip label="Width" value={`${analysis.resolution.width}px`} />
           <StatChip label="Height" value={`${analysis.resolution.height}px`} />
           <StatChip label="Megapixels" value={`${analysis.resolution.megapixels} MP`} />
@@ -72,11 +72,11 @@ export function OverviewPanel({ result }: { result: UploadImageResponse }) {
       </div>
 
       {/* Insights */}
-      <div>
-        <p className="mb-1 text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
+      <div className="border-t border-border/50 pt-4 pb-4 dark:border-border-dark/40">
+        <p className="mb-2 text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
           Insights
         </p>
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
           <StatChip label="Contrast" value={analysis.contrast.isLowContrast ? 'Low' : 'Good'} />
           <StatChip label="Dimensions" value={`${analysis.resolution.width} × ${analysis.resolution.height}`} />
         </div>
@@ -84,13 +84,13 @@ export function OverviewPanel({ result }: { result: UploadImageResponse }) {
 
       {/* Recommendations */}
       {recommendations.length > 0 && (
-        <div>
-          <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
+        <div className="border-t border-border/50 pt-4 dark:border-border-dark/40">
+          <p className="mb-2 text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
             Suggestions
           </p>
-          <div className="flex flex-col gap-1">
-            {recommendations.map((rec, i) => (
-              <RecommendationCard key={rec.id} recommendation={rec} index={i} />
+          <div className="flex flex-col gap-2.5">
+            {recommendations.map((rec) => (
+              <RecommendationCard key={rec.id} recommendation={rec} />
             ))}
           </div>
         </div>

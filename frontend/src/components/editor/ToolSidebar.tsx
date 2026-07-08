@@ -9,11 +9,13 @@ interface ToolSidebarProps {
   onSelect: (tool: EditToolId | null) => void;
   collapsed: boolean;
   onToggleCollapsed: () => void;
+  /** True before an image is loaded — tools render but are inert. */
+  disabled?: boolean;
 }
 
 const TOOLS_BY_ID = Object.fromEntries(TOOLS.map((t) => [t.id, t]));
 
-export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed }: ToolSidebarProps) {
+export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed, disabled = false }: ToolSidebarProps) {
   return (
     <aside
       style={{ width: collapsed ? 56 : 208 }}
@@ -26,6 +28,7 @@ export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed
           icon={ImageIcon}
           isActive={activeTool === null}
           collapsed={collapsed}
+          disabled={disabled}
           onClick={() => onSelect(null)}
         />
 
@@ -33,7 +36,14 @@ export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed
           {TOOL_CATEGORIES.map((category) => (
             <div key={category.label} className="flex flex-col">
               {!collapsed && (
-                <p className="mb-1 px-2.5 text-[10px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary">
+                <p
+                  className={[
+                    'mb-1 px-2.5 text-[10px] font-semibold uppercase tracking-widest',
+                    disabled
+                      ? 'text-ink-tertiary/40 dark:text-ink-dark-tertiary/40'
+                      : 'text-ink-tertiary dark:text-ink-dark-tertiary',
+                  ].join(' ')}
+                >
                   {category.label}
                 </p>
               )}
@@ -47,6 +57,7 @@ export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed
                     icon={tool.icon}
                     isActive={activeTool === id}
                     collapsed={collapsed}
+                    disabled={disabled}
                     onClick={() => onSelect(id)}
                   />
                 );
@@ -79,41 +90,46 @@ function SidebarButton({
   icon: Icon,
   isActive,
   collapsed,
+  disabled,
   onClick,
 }: {
   label: string;
   icon: typeof ImageIcon;
   isActive: boolean;
   collapsed: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-current={isActive ? 'true' : undefined}
-      title={collapsed ? label : undefined}
+      title={disabled ? 'Upload an image to unlock tools' : collapsed ? label : undefined}
       className={[
         'group relative flex items-center rounded-md transition-colors duration-100 select-none',
         collapsed ? 'mx-auto h-11 w-11 justify-center' : 'h-11 w-full gap-[12px] px-2.5',
-        isActive
-          ? 'text-accent'
-          : 'text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark',
+        disabled
+          ? 'cursor-not-allowed text-ink-tertiary/50 dark:text-ink-dark-tertiary/40'
+          : isActive
+            ? 'text-accent'
+            : 'text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark',
       ].join(' ')}
     >
-      {isActive && (
+      {isActive && !disabled && (
         <motion.span
           layoutId="tool-sidebar-active-bg"
           className="absolute inset-0 rounded-md bg-accent-subtle dark:bg-accent-subtle-dark"
           transition={{ type: 'spring', stiffness: 500, damping: 40 }}
         />
       )}
-      {!isActive && (
+      {!isActive && !disabled && (
         <span className="absolute inset-0 rounded-md bg-black/5 opacity-0 transition-opacity duration-100 group-hover:opacity-100 dark:bg-white/5" />
       )}
       <Icon className="relative h-[18px] w-[18px] shrink-0" />
       {!collapsed && (
-        <span className="relative truncate text-[14px] font-medium leading-none">{label}</span>
+        <span className="relative truncate text-[14px] font-medium leading-[1.3]">{label}</span>
       )}
     </button>
   );

@@ -13,7 +13,7 @@ function MetaRow({ label, value }: { label: string; value: string | null | undef
   return (
     <div className="flex items-start gap-3 border-b border-border/40 dark:border-border-dark/40 py-2 last:border-0">
       <span className="w-28 shrink-0 text-xs font-medium text-ink-secondary dark:text-ink-dark-secondary pt-0.5">{label}</span>
-      <span className="font-mono text-xs leading-relaxed break-all">{value}</span>
+      <span className="min-w-0 font-mono text-xs leading-relaxed break-all">{value}</span>
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function MetadataTool({ imageId }: MetadataToolProps) {
             key="metadata"
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl border border-border/50 dark:border-border-dark/50 bg-canvas dark:bg-canvas-dark px-3 py-1"
+            className="flex flex-col"
           >
             <MetaRow
               label="Dimensions"

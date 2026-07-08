@@ -5,6 +5,7 @@ import type { EnhanceOptions, EditResult } from '@/types/edit';
 import { ToggleRow } from '@/components/ui/ToggleRow';
 import { Button } from '@/components/ui/Button';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
+import { StatusLine } from '@/components/ui/StatusLine';
 import { ApiRequestError } from '@/services/apiClient';
 
 const DEFAULT_OPTIONS: EnhanceOptions = {
@@ -53,7 +54,7 @@ export function EnhanceTool({ imageId, onEditResult }: { imageId: string; onEdit
       {!hasAny && <p className="text-xs text-ink-secondary/60 dark:text-ink-dark-secondary/60">Select at least one enhancement.</p>}
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
       {mutation.isSuccess && (
-        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+        <StatusLine tone="success">Applied — see Export below to download</StatusLine>
       )}
     </div>
   );

@@ -3,6 +3,7 @@ import { LogoMark } from '@/components/icons/LogoMark';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useCommandPalette } from '@/contexts/CommandPaletteContext';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+// ⌘K still works as a keyboard shortcut — just no visible search bar
 
 const NAV_LINKS = [
   { to: '/', label: 'Editor' },
@@ -62,25 +63,9 @@ export function NavBar() {
           </nav>
         </div>
 
-        {/* Right: Search + Theme */}
-        <div className="flex h-full shrink-0 items-center gap-2.5">
-          <button
-            type="button"
-            onClick={open}
-            aria-label="Open command palette (⌘K)"
-            className="hidden h-9 min-w-[168px] items-center gap-2 rounded-lg border border-border/60 bg-canvas px-3 text-sm text-ink-secondary transition-colors hover:border-border hover:text-ink dark:border-border-dark/60 dark:bg-canvas-dark dark:text-ink-dark-secondary dark:hover:border-border-dark dark:hover:text-ink-dark sm:flex"
-          >
-            <svg viewBox="0 0 14 14" fill="none" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
-              <circle cx="5.5" cy="5.5" r="3.5" stroke="currentColor" strokeWidth="1.4" />
-              <path d="M9 9l2.5 2.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            </svg>
-            <span className="flex-1 text-left">Search</span>
-            <kbd className="font-mono text-[10px] tracking-tight opacity-50">⌘K</kbd>
-          </button>
-
-          <div className="flex h-9 shrink-0 items-center">
-            <ThemeToggle />
-          </div>
+        {/* Right: Theme toggle */}
+        <div className="flex h-full shrink-0 items-center">
+          <ThemeToggle />
         </div>
       </div>
     </header>

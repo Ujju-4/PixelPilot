@@ -5,6 +5,7 @@ import type { BackgroundMode, EditResult } from '@/types/edit';
 import { OptionGroup } from '@/components/ui/OptionGroup';
 import { Button } from '@/components/ui/Button';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
+import { StatusLine } from '@/components/ui/StatusLine';
 import { ApiRequestError } from '@/services/apiClient';
 
 const MODE_OPTIONS: { value: BackgroundMode; label: string }[] = [
@@ -47,7 +48,7 @@ export function BackgroundRemovalTool({ imageId, onEditResult }: {
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            className="h-9 w-12 cursor-pointer rounded-xl border border-border/60 dark:border-border-dark/60 bg-canvas dark:bg-canvas-dark p-1"
+            className="h-8 w-11 cursor-pointer rounded border border-border dark:border-border-dark bg-transparent p-1"
           />
           <span className="font-mono text-sm text-ink-secondary dark:text-ink-dark-secondary">{color}</span>
         </div>
@@ -65,7 +66,7 @@ export function BackgroundRemovalTool({ imageId, onEditResult }: {
                 type="color"
                 value={val}
                 onChange={(e) => set(e.target.value)}
-                className="h-8 w-10 cursor-pointer rounded-lg border border-border/60 dark:border-border-dark/60 bg-canvas dark:bg-canvas-dark p-0.5"
+                className="h-7 w-9 cursor-pointer rounded border border-border dark:border-border-dark bg-transparent p-0.5"
               />
             </div>
           ))}
@@ -87,7 +88,7 @@ export function BackgroundRemovalTool({ imageId, onEditResult }: {
 
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
       {mutation.isSuccess && (
-        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+        <StatusLine tone="success">Applied — see Export below to download</StatusLine>
       )}
     </div>
   );

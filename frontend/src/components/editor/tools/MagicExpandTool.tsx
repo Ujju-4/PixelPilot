@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
+import { StatusLine } from '@/components/ui/StatusLine';
 import { ApiRequestError } from '@/services/apiClient';
 
 const PRESETS: { label: string; options: MagicExpandOptions }[] = [
@@ -129,7 +130,7 @@ export function MagicExpandTool({ imageId, onEditResult }: {
 
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
       {mutation.isSuccess && (
-        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+        <StatusLine tone="success">Applied — see Export below to download</StatusLine>
       )}
     </div>
   );

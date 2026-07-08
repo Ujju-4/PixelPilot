@@ -59,13 +59,12 @@ export function OcrTool({ imageId }: { imageId: string }) {
             className="flex flex-col gap-3"
           >
             <div className="flex flex-wrap gap-3 text-xs text-ink-secondary dark:text-ink-dark-secondary">
-              <span className="rounded-full border border-border/50 dark:border-border-dark/50 bg-canvas dark:bg-canvas-dark px-2.5 py-1">
-                {mutation.data.wordCount} word{mutation.data.wordCount !== 1 ? 's' : ''}
-              </span>
+              <span>{mutation.data.wordCount} word{mutation.data.wordCount !== 1 ? 's' : ''}</span>
               {mutation.data.averageConfidence !== null && (
-                <span className="rounded-full border border-border/50 dark:border-border-dark/50 bg-canvas dark:bg-canvas-dark px-2.5 py-1">
-                  {mutation.data.averageConfidence}% confidence
-                </span>
+                <>
+                  <span className="text-ink-tertiary dark:text-ink-dark-tertiary">·</span>
+                  <span>{mutation.data.averageConfidence}% confidence</span>
+                </>
               )}
             </div>
 
@@ -79,7 +78,7 @@ export function OcrTool({ imageId }: { imageId: string }) {
                   readOnly
                   value={mutation.data.text}
                   rows={Math.min(10, mutation.data.text.split('\n').length + 2)}
-                  className="w-full resize-y rounded-xl border border-border/60 dark:border-border-dark/60 bg-canvas dark:bg-canvas-dark px-3 py-2.5 font-mono text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                  className="w-full resize-y rounded-lg border border-border dark:border-border-dark bg-transparent px-3 py-2.5 font-mono text-sm focus:border-accent focus:outline-none"
                   aria-label="Extracted text"
                 />
                 <div className="flex gap-2">

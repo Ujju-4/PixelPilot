@@ -7,14 +7,19 @@ import { UploadCloudIcon } from '@/components/icons/UploadIcons';
 interface DropzoneProps {
   onFileSelected: (file: File) => void;
   disabled?: boolean;
+  /** 'canvas' renders on the dark workspace stage; 'light' is for use on a
+   *  regular surface (e.g. inside the batch page). */
+  tone?: 'light' | 'canvas';
+  className?: string;
 }
 
 const ACCEPT_ATTR = ACCEPTED_IMAGE_MIME_TYPES.join(',');
 
-export function Dropzone({ onFileSelected, disabled = false }: DropzoneProps) {
+export function Dropzone({ onFileSelected, disabled = false, tone = 'light', className = '' }: DropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragActive, setIsDragActive] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const isCanvas = tone === 'canvas';
 
   const handleFile = useCallback(
     (file: File | undefined | null) => {
@@ -73,31 +78,46 @@ export function Dropzone({ onFileSelected, disabled = false }: DropzoneProps) {
         onDrop={handleDrop}
         onDragOver={(e) => { e.preventDefault(); if (!disabled) setIsDragActive(true); }}
         onDragLeave={() => setIsDragActive(false)}
-        whileHover={disabled ? undefined : { scale: 1.005 }}
-        whileTap={disabled ? undefined : { scale: 0.998 }}
+        whileHover={disabled ? undefined : { scale: 1.004 }}
+        whileTap={disabled ? undefined : { scale: 0.997 }}
         className={[
-          'flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all duration-200',
+          'flex cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-8 text-center transition-all duration-200',
+          isCanvas ? 'min-h-[340px]' : 'min-h-[260px] py-10',
           disabled ? 'cursor-not-allowed opacity-60' : '',
-          isDragActive
-            ? 'border-accent bg-accent-subtle dark:bg-accent-subtle-dark scale-[1.01]'
-            : 'border-border/60 dark:border-border-dark/60 hover:border-accent/40 dark:hover:border-accent/30 hover:bg-canvas dark:hover:bg-canvas-dark',
+          isCanvas
+            ? isDragActive
+              ? 'border-accent bg-accent/[0.08]'
+              : 'border-white/15 hover:border-white/25 hover:bg-white/[0.02]'
+            : isDragActive
+              ? 'border-accent bg-accent-subtle dark:bg-accent-subtle-dark'
+              : 'border-border/60 dark:border-border-dark/60 hover:border-accent/40 dark:hover:border-accent/30 hover:bg-canvas dark:hover:bg-canvas-dark',
+          className,
         ].join(' ')}
       >
-        <div className={[
-          'flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-200',
-          isDragActive ? 'bg-accent/15' : 'bg-border/30 dark:bg-border-dark/30',
-        ].join(' ')}>
-          <UploadCloudIcon className={`h-5 w-5 ${isDragActive ? 'text-accent' : 'text-ink-secondary dark:text-ink-dark-secondary'}`} />
+        <div
+          className={[
+            'flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200',
+            isCanvas
+              ? isDragActive ? 'bg-accent/20' : 'bg-white/[0.06]'
+              : isDragActive ? 'bg-accent/15' : 'bg-border/30 dark:bg-border-dark/30',
+          ].join(' ')}
+        >
+          <UploadCloudIcon
+            className={[
+              'h-5 w-5',
+              isDragActive ? 'text-accent' : isCanvas ? 'text-white/40' : 'text-ink-secondary dark:text-ink-dark-secondary',
+            ].join(' ')}
+          />
         </div>
 
         <div>
-          <p className="font-semibold text-md">
+          <p className={`text-[15px] font-semibold ${isCanvas ? 'text-white/90' : 'text-ink dark:text-ink-dark'}`}>
             {isDragActive ? 'Release to upload' : 'Drop an image here'}
           </p>
-          <p className="mt-1 text-sm text-ink-secondary dark:text-ink-dark-secondary">
+          <p className={`mt-1 text-sm ${isCanvas ? 'text-white/45' : 'text-ink-secondary dark:text-ink-dark-secondary'}`}>
             or <span className="font-medium text-accent">browse files</span> · paste from clipboard
           </p>
-          <p className="mt-1.5 text-xs text-ink-secondary/60 dark:text-ink-dark-secondary/60">
+          <p className={`mt-1.5 text-xs ${isCanvas ? 'text-white/25' : 'text-ink-secondary/60 dark:text-ink-dark-secondary/60'}`}>
             PNG · JPG · WEBP · AVIF · HEIC — up to 25 MB
           </p>
         </div>
@@ -115,7 +135,7 @@ export function Dropzone({ onFileSelected, disabled = false }: DropzoneProps) {
       </motion.div>
 
       {validationError && (
-        <p role="alert" className="mt-2 text-sm text-danger">
+        <p role="alert" className={`mt-2 text-sm ${isCanvas ? 'text-red-400' : 'text-danger'}`}>
           {validationError}
         </p>
       )}

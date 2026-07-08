@@ -5,6 +5,7 @@ import type { UpscaleFactor, EditResult } from '@/types/edit';
 import { OptionGroup } from '@/components/ui/OptionGroup';
 import { Button } from '@/components/ui/Button';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
+import { StatusLine } from '@/components/ui/StatusLine';
 import { ApiRequestError } from '@/services/apiClient';
 
 const FACTOR_OPTIONS: { value: '2'|'4'|'8'; label: string }[] = [
@@ -29,7 +30,7 @@ export function UpscaleTool({ imageId, onEditResult }: { imageId: string; onEdit
       </Button>
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
       {mutation.isSuccess && (
-        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+        <StatusLine tone="success">Applied — see Export below to download</StatusLine>
       )}
     </div>
   );

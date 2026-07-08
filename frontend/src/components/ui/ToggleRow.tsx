@@ -5,16 +5,11 @@ interface ToggleRowProps {
   onChange: (checked: boolean) => void;
 }
 
+// A row in a list, separated by a hairline — not its own bordered/tinted
+// card. Six of these stacked should read as one checklist, not six boxes.
 export function ToggleRow({ label, description, checked, onChange }: ToggleRowProps) {
   return (
-    <label
-      className={[
-        'group flex cursor-pointer items-start gap-3 rounded-lg border px-3.5 py-3 transition-all duration-150',
-        checked
-          ? 'border-accent/30 bg-accent-subtle dark:border-accent/25 dark:bg-accent-subtle-dark'
-          : 'border-border/60 bg-surface hover:border-border hover:bg-canvas dark:border-border-dark/50 dark:bg-surface-dark dark:hover:border-border-dark dark:hover:bg-canvas-dark',
-      ].join(' ')}
-    >
+    <label className="group flex cursor-pointer items-start gap-3 border-b border-border/50 py-3 first:pt-0 last:border-0 last:pb-0 dark:border-border-dark/40">
       <input
         type="checkbox"
         checked={checked}
@@ -24,10 +19,10 @@ export function ToggleRow({ label, description, checked, onChange }: ToggleRowPr
       <div
         aria-hidden="true"
         className={[
-          'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border transition-all duration-150',
+          'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-colors duration-150',
           checked
             ? 'border-accent bg-accent'
-            : 'border-border bg-surface group-hover:border-ink-tertiary dark:border-border-dark dark:bg-surface-dark dark:group-hover:border-ink-dark-tertiary',
+            : 'border-border bg-transparent group-hover:border-ink-tertiary dark:border-border-dark dark:group-hover:border-ink-dark-tertiary',
         ].join(' ')}
       >
         {checked && (
@@ -36,11 +31,16 @@ export function ToggleRow({ label, description, checked, onChange }: ToggleRowPr
           </svg>
         )}
       </div>
-      <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-semibold leading-snug text-ink dark:text-ink-dark">
+      <span className="min-w-0 flex-1 overflow-hidden">
+        <span
+          className={[
+            'block text-[13px] font-medium leading-snug break-words transition-colors duration-150',
+            checked ? 'text-ink dark:text-ink-dark' : 'text-ink-secondary dark:text-ink-dark-secondary',
+          ].join(' ')}
+        >
           {label}
         </span>
-        <span className="mt-0.5 block text-[13px] leading-snug text-ink-secondary dark:text-ink-dark-secondary">
+        <span className="mt-0.5 block text-[11px] leading-snug break-words text-ink-secondary/70 dark:text-ink-dark-secondary/70">
           {description}
         </span>
       </span>

@@ -3,9 +3,11 @@ interface StatChipProps {
   value: string;
 }
 
+// A plain label/value pair — no border, no fill. A grid of these reads as a
+// spec sheet, not a row of dashboard widgets.
 export function StatChip({ label, value }: StatChipProps) {
   return (
-    <div className="flex flex-col gap-0.5 rounded border border-border/40 dark:border-border-dark/40 bg-canvas dark:bg-canvas-dark px-2.5 py-2">
+    <div className="flex flex-col gap-0.5">
       <p className="text-[9px] font-semibold uppercase tracking-widest text-ink-tertiary dark:text-ink-dark-tertiary leading-none">
         {label}
       </p>

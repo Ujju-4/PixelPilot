@@ -5,7 +5,6 @@ import {
   useState,
   type PointerEvent,
 } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface ImageViewerProps {
   src: string;
@@ -13,9 +12,9 @@ interface ImageViewerProps {
   className?: string;
 }
 
-const MIN_ZOOM = 1;
+const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 8;
-const ZOOM_STEP = 0.3;
+const ZOOM_STEP = 0.25;
 
 function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v));
@@ -49,10 +48,29 @@ function FullscreenIcon({ className }: { className?: string }) {
   );
 }
 
+function RotateCCWIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
+      <path d="M3 8a5 5 0 1 0 1.5-3.5L2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 2v3h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function RotateCWIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
+      <path d="M13 8a5 5 0 1 1-1.5-3.5L14 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 2v3h-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function ImageViewer({ src, alt, className }: ImageViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0); // degrees: 0 | 90 | 180 | 270
   const [isDragging, setIsDragging] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -63,12 +81,24 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
   useEffect(() => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
+    setRotation(0);
     setImgLoaded(false);
     setImgError(false);
   }, [src]);
 
   const resetView = useCallback(() => {
     setZoom(1);
+    setPan({ x: 0, y: 0 });
+    setRotation(0);
+  }, []);
+
+  const rotateCW = useCallback(() => {
+    setRotation((r) => (r + 90) % 360);
+    setPan({ x: 0, y: 0 });
+  }, []);
+
+  const rotateCCW = useCallback(() => {
+    setRotation((r) => (r - 90 + 360) % 360);
     setPan({ x: 0, y: 0 });
   }, []);
 
@@ -77,8 +107,9 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
       const container = containerRef.current;
       if (!container) return nextPan;
       const { width, height } = container.getBoundingClientRect();
-      const maxX = ((nextZoom - 1) * width) / 2;
-      const maxY = ((nextZoom - 1) * height) / 2;
+      // Allow free panning always; just keep bounds generous so image stays reachable
+      const maxX = Math.max(((nextZoom - 1) * width) / 2, width * 0.4);
+      const maxY = Math.max(((nextZoom - 1) * height) / 2, height * 0.4);
       return {
         x: clamp(nextPan.x, -maxX, maxX),
         y: clamp(nextPan.y, -maxY, maxY),
@@ -109,7 +140,7 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
   );
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (zoom <= 1) return;
+    if (zoom <= 1) return; // nothing to reveal by panning an already-fit image
     setIsDragging(true);
     lastPointer.current = { x: event.clientX, y: event.clientY };
     (event.target as HTMLElement).setPointerCapture(event.pointerId);
@@ -174,7 +205,7 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
       className={[
-        'group relative flex items-center justify-center overflow-hidden rounded-lg',
+        'relative flex items-center justify-center overflow-hidden rounded-lg',
         isDragging ? 'cursor-grabbing' : zoom > 1 ? 'cursor-grab' : 'cursor-default',
         isFullscreen ? 'fixed inset-0 z-50 rounded-none bg-black' : '',
         className ?? '',
@@ -208,7 +239,7 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
   onLoad={() => setImgLoaded(true)}
   onError={() => setImgError(true)}
   style={{
-    transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+    transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom}) rotate(${rotation}deg)`,
     transformOrigin: 'center center',
     userSelect: 'none',
     touchAction: 'none',
@@ -222,63 +253,75 @@ export function ImageViewer({ src, alt, className }: ImageViewerProps) {
   className="block object-contain rounded-md shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.06)]"
 />
 
-      {/* Controls overlay — on hover */}
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-0.5 rounded-full border border-white/10 bg-black/60 px-2 py-1 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200"
-          aria-label="Image viewer controls"
+      {/* Zoom & view controls — a persistent toolbar, not a hover-only pill.
+          Anchored to the canvas viewport (the pro-app convention), always
+          visible, every button the same height so nothing looks misaligned. */}
+      <div
+        className="absolute bottom-4 left-1/2 flex h-11 -translate-x-1/2 items-center gap-1 rounded-full border border-white/10 bg-black/70 px-1.5 shadow-lg backdrop-blur-sm"
+        aria-label="Image viewer controls"
+      >
+        <button
+          type="button"
+          onClick={() => zoomBy(-ZOOM_STEP)}
+          disabled={zoom <= MIN_ZOOM}
+          aria-label="Zoom out"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 disabled:opacity-25 transition-colors"
         >
-          <button
-            type="button"
-            onClick={() => zoomBy(-ZOOM_STEP)}
-            disabled={zoom <= MIN_ZOOM}
-            aria-label="Zoom out"
-            className="rounded-full p-1 text-white/50 hover:text-white disabled:opacity-20 transition-colors"
-          >
-            <ZoomOutIcon className="h-3.5 w-3.5" />
-          </button>
+          <ZoomOutIcon className="h-[18px] w-[18px]" />
+        </button>
 
-          <button
-            type="button"
-            onClick={resetView}
-            className="min-w-[2.8rem] rounded-full px-1 py-0.5 font-mono text-[10px] text-white/50 hover:text-white transition-colors"
-            aria-label="Reset zoom"
-          >
-            {Math.round(zoom * 100)}%
-          </button>
-
-          <button
-            type="button"
-            onClick={() => zoomBy(ZOOM_STEP)}
-            disabled={zoom >= MAX_ZOOM}
-            aria-label="Zoom in"
-            className="rounded-full p-1 text-white/50 hover:text-white disabled:opacity-20 transition-colors"
-          >
-            <ZoomInIcon className="h-3.5 w-3.5" />
-          </button>
-
-          <div className="mx-1 h-3 w-px bg-white/10" />
-
-          <button
-            type="button"
-            onClick={toggleFullscreen}
-            aria-label={isFullscreen ? 'Exit fullscreen' : 'View fullscreen'}
-            aria-pressed={isFullscreen}
-            className="rounded-full p-1 text-white/50 hover:text-white transition-colors"
-          >
-            <FullscreenIcon className="h-3.5 w-3.5" />
-          </button>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Zoom level badge */}
-      {zoom > 1 && (
-        <div className="absolute top-3 right-3 rounded-full bg-black/60 border border-white/10 px-2 py-0.5 font-mono text-[10px] text-white/60 pointer-events-none backdrop-blur-sm">
+        <button
+          type="button"
+          onClick={resetView}
+          disabled={zoom === MIN_ZOOM}
+          className="flex h-8 min-w-[3.25rem] shrink-0 items-center justify-center rounded-full font-mono text-[12px] text-white/60 hover:text-white hover:bg-white/10 disabled:cursor-default disabled:hover:text-white/60 disabled:hover:bg-transparent transition-colors"
+          aria-label="Reset zoom"
+        >
           {Math.round(zoom * 100)}%
-        </div>
-      )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => zoomBy(ZOOM_STEP)}
+          disabled={zoom >= MAX_ZOOM}
+          aria-label="Zoom in"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 disabled:opacity-25 transition-colors"
+        >
+          <ZoomInIcon className="h-[18px] w-[18px]" />
+        </button>
+
+        <div className="mx-1 h-4 w-px shrink-0 bg-white/10" />
+
+        <button
+          type="button"
+          onClick={rotateCCW}
+          aria-label="Rotate counter-clockwise"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <RotateCCWIcon className="h-[18px] w-[18px]" />
+        </button>
+
+        <button
+          type="button"
+          onClick={rotateCW}
+          aria-label="Rotate clockwise"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <RotateCWIcon className="h-[18px] w-[18px]" />
+        </button>
+
+        <div className="mx-1 h-4 w-px shrink-0 bg-white/10" />
+
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          aria-label={isFullscreen ? 'Exit fullscreen' : 'View fullscreen'}
+          aria-pressed={isFullscreen}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <FullscreenIcon className="h-[18px] w-[18px]" />
+        </button>
+      </div>
     </div>
   );
 }

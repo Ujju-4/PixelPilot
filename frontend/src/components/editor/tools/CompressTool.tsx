@@ -5,6 +5,7 @@ import type { OutputFormat, EditResult } from '@/types/edit';
 import { OptionGroup } from '@/components/ui/OptionGroup';
 import { Button } from '@/components/ui/Button';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
+import { StatusLine } from '@/components/ui/StatusLine';
 import { formatBytes } from '@/utils/fileValidation';
 import { ApiRequestError } from '@/services/apiClient';
 
@@ -70,7 +71,7 @@ export function CompressTool({ imageId, onEditResult }: { imageId: string; onEdi
 
       {errorMessage && <ErrorBanner message={errorMessage} onDismiss={() => mutation.reset()} />}
       {mutation.isSuccess && (
-        <p className="text-xs font-medium text-success">✓ Applied — see Export below to download</p>
+        <StatusLine tone="success">Applied — see Export below to download</StatusLine>
       )}
     </div>
   );
