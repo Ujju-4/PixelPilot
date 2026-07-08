@@ -43,9 +43,12 @@ export function CanvasStage({
       topBar={
         <>
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xs font-medium text-white/80 truncate max-w-[180px]">{displayLabel}</span>
+            {/* Filename label — ink on light canvas, white on dark canvas */}
+            <span className="text-xs font-medium text-ink/70 dark:text-white/80 truncate max-w-[180px]">
+              {displayLabel}
+            </span>
             {canUndo && (
-              <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/40">
+              <span className="inline-flex items-center rounded-full border border-black/10 bg-black/[0.04] dark:border-white/10 dark:bg-white/5 px-2 py-0.5 text-[10px] font-medium text-ink-secondary dark:text-white/40">
                 edited
               </span>
             )}
@@ -60,7 +63,7 @@ export function CanvasStage({
                   'rounded px-2.5 py-1 text-xs font-medium transition-all duration-150',
                   showComparison
                     ? 'bg-accent/20 text-accent border border-accent/30'
-                    : 'text-white/50 hover:text-white/80 hover:bg-white/5',
+                    : 'text-ink-secondary dark:text-white/50 hover:text-ink dark:hover:text-white/80 hover:bg-black/[0.04] dark:hover:bg-white/5',
                 ].join(' ')}
               >
                 {showComparison ? 'Close compare' : 'Compare'}
@@ -70,16 +73,17 @@ export function CanvasStage({
               <button
                 type="button"
                 onClick={onUndo}
-                className="rounded px-2.5 py-1 text-xs font-medium text-accent hover:text-accent/80 transition-colors hover:bg-accent/10"
+                className="rounded px-2.5 py-1 text-xs font-medium text-accent hover:text-accent-hover transition-colors hover:bg-accent/10"
               >
                 ↩ Undo
               </button>
             )}
-            <div className="mx-1 h-3 w-px bg-white/10" />
+            {/* Divider */}
+            <div className="mx-1 h-3 w-px bg-black/10 dark:bg-white/10" />
             <button
               type="button"
               onClick={onReset}
-              className="rounded border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-white/50 transition-all hover:bg-white/10 hover:text-white/80 hover:border-white/20"
+              className="rounded border border-black/10 bg-black/[0.04] dark:border-white/10 dark:bg-white/5 px-2.5 py-1 text-xs font-medium text-ink-secondary dark:text-white/50 transition-all hover:bg-black/[0.07] dark:hover:bg-white/10 hover:text-ink dark:hover:text-white/80 hover:border-black/20 dark:hover:border-white/20"
             >
               New image
             </button>
@@ -89,7 +93,6 @@ export function CanvasStage({
     >
       <div className="w-full h-full max-w-6xl flex items-center justify-center">
         <AnimatePresence mode="wait" initial={false}>
-          {/* Object removal — show paintable canvas in main area */}
           {isRemovingObject ? (
             <motion.div
               key="remove-object"

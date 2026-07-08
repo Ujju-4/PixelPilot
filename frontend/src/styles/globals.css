@@ -56,13 +56,17 @@
     display: none;
   }
 
-  /* Canvas grid dot pattern */
+  /* Canvas grid dot pattern — dark dots in light mode, white dots in dark mode */
   .canvas-grid {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
     background-size: 24px 24px;
   }
+  html.dark .canvas-grid {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+  }
+  /* Legacy explicit-light variant kept for any direct usage */
   .canvas-grid-light {
-    background-image: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 }

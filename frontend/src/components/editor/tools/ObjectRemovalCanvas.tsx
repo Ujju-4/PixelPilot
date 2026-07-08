@@ -158,8 +158,8 @@ export function ObjectRemovalCanvas({ imageId }: ObjectRemovalCanvasProps) {
 
       {/* Spinner while image loads */}
       {!imgLoaded && (
-        <div className="flex h-full w-full items-center justify-center gap-3 text-white/40">
-          <div className="h-6 w-6 rounded-full border-2 border-white/10 border-t-white/50 animate-spin" />
+        <div className="flex h-full w-full items-center justify-center gap-3 text-ink-secondary/50 dark:text-white/40">
+          <div className="h-6 w-6 rounded-full border-2 border-black/10 border-t-black/30 dark:border-white/10 dark:border-t-white/50 animate-spin" />
           <span className="text-sm">Loading image…</span>
         </div>
       )}

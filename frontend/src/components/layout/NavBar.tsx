@@ -18,7 +18,7 @@ export function NavBar() {
   useKeyboardShortcuts({ 'mod+k': open });
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border/60 dark:border-border-dark/60 bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-border dark:border-border-dark/60 bg-surface/90 dark:bg-surface-dark/90 shadow-[0_1px_0_rgba(15,15,16,0.02)] backdrop-blur-md">
       <div className="flex h-16 items-center justify-between gap-4 px-4">
 
         {/* Left: Logo + Nav */}

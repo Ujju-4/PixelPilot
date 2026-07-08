@@ -43,7 +43,7 @@ export function ContextPanel(props: ContextPanelProps) {
   return (
     <aside
       style={{ width: 296 }}
-      className="flex shrink-0 flex-col overflow-hidden border-l border-border/50 bg-surface dark:border-border-dark/60 dark:bg-surface-dark"
+      className="flex shrink-0 flex-col overflow-hidden border-l border-border bg-surface dark:border-border-dark/60 dark:bg-surface-dark"
     >
       {/* Panel header */}
       <div className="flex h-11 items-center gap-2 border-b border-border/50 px-4 dark:border-border-dark/40">

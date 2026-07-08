@@ -6,16 +6,17 @@ export default {
     extend: {
       colors: {
         canvas: {
-          DEFAULT: '#FAFAF9',
+          DEFAULT: '#EDEDF0',
           dark: '#0F0F10',
         },
         surface: {
           DEFAULT: '#FFFFFF',
           dark: '#18181B',
           'dark-2': '#1C1C1F',
+          sunken: '#F5F5F7',
         },
         border: {
-          DEFAULT: '#E7E5E4',
+          DEFAULT: '#DCDBDF',
           dark: '#27272A',
         },
         ink: {
@@ -45,9 +46,9 @@ export default {
           DEFAULT: '#DC2626',
           subtle: '#FDECEC',
         },
-        // Dedicated canvas-stage dark bg
+        // Canvas workspace — light mode is a cool neutral gray, dark is near-black
         stage: {
-          DEFAULT: '#111113',
+          DEFAULT: '#E1E2E6',
           dark: '#0A0A0C',
         },
       },

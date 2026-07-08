@@ -19,7 +19,7 @@ export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed
   return (
     <aside
       style={{ width: collapsed ? 56 : 208 }}
-      className="flex shrink-0 flex-col overflow-hidden border-r border-border/50 bg-surface transition-[width] duration-200 ease-out dark:border-border-dark/60 dark:bg-surface-dark"
+      className="flex shrink-0 flex-col overflow-hidden border-r border-border bg-surface shadow-[1px_0_0_rgba(15,15,16,0.02)] transition-[width] duration-200 ease-out dark:border-border-dark/60 dark:bg-surface-dark"
     >
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-2 py-3">
         {/* Overview entry */}
