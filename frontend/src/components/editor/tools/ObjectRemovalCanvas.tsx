@@ -116,7 +116,7 @@ export function ObjectRemovalCanvas({ imageId }: ObjectRemovalCanvasProps) {
       // it's unmistakably visible even on dark or red-toned images.
       const overlayCtx = overlayCanvasRef.current?.getContext('2d');
       if (overlayCtx) {
-        overlayCtx.fillStyle = 'rgba(109, 91, 208, 0.82)'; // accent #6D5BD0 at 82 %
+        overlayCtx.fillStyle = 'rgba(37, 99, 235, 0.82)'; // accent #2563EB at 82 %
         overlayCtx.beginPath();
         overlayCtx.arc(pt.x, pt.y, BRUSH_RADIUS, 0, Math.PI * 2);
         overlayCtx.fill();

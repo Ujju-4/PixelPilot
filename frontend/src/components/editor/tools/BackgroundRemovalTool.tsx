@@ -20,8 +20,8 @@ export function BackgroundRemovalTool({ imageId, onEditResult }: {
   onEditResult?: (r: EditResult) => void;
 }) {
   const [mode, setMode] = useState<BackgroundMode>('transparent');
-  const [color, setColor] = useState('#6D5BD0');
-  const [gradientFrom, setGradientFrom] = useState('#6D5BD0');
+  const [color, setColor] = useState('#2563EB');
+  const [gradientFrom, setGradientFrom] = useState('#2563EB');
   const [gradientTo, setGradientTo] = useState('#FAFAF9');
 
   const mutation = useMutation({

@@ -24,10 +24,10 @@ export function ThemeToggle() {
         height: TRACK_HEIGHT,
         padding: PADDING,
         backgroundImage: isDark
-          ? 'linear-gradient(to bottom, #1c1e42, #0e0f24)'
+          ? 'linear-gradient(to bottom, #0f1b3d, #060e24)'
           : 'linear-gradient(to bottom, #8fcbf4, #5aa9ec)',
         boxShadow: isDark
-          ? '0 0 0 3px rgba(109,91,208,0.18), inset 0 0 0 1px rgba(255,255,255,0.06)'
+          ? '0 0 0 3px rgba(37,99,235,0.22), inset 0 0 0 1px rgba(255,255,255,0.06)'
           : 'inset 0 0 0 1px rgba(255,255,255,0.25)',
       }}
       className="relative inline-flex shrink-0 items-center rounded-full transition-[filter,box-shadow] duration-300 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 focus-visible:ring-offset-surface dark:focus-visible:ring-offset-surface-dark"
@@ -71,7 +71,7 @@ export function ThemeToggle() {
               animate={{ rotate: 0, opacity: 1, scale: 1 }}
               exit={{ rotate: 80, opacity: 0, scale: 0.5 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center justify-center text-[#1c1e42]"
+              className="flex items-center justify-center text-[#0f1b3d]"
             >
               <MoonIcon className="h-2.5 w-2.5" />
             </motion.span>

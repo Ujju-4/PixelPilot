@@ -27,11 +27,15 @@ export default {
           'dark-tertiary': '#71717A',
         },
         accent: {
-          DEFAULT: '#6D5BD0',
-          hover: '#5C4CB8',
-          subtle: '#EEEAFB',
-          'subtle-dark': '#2A2440',
-          glow: 'rgba(109,91,208,0.15)',
+          DEFAULT: '#2563EB',        // primary blue
+          hover: '#1D4ED8',          // hover blue
+          pressed: '#1E40AF',        // pressed / active
+          subtle: '#DBEAFE',         // subtle background (light)
+          'subtle-dark': '#172554',  // subtle background (dark)
+          glow: 'rgba(37,99,235,0.15)',
+          border: '#93C5FD',         // accent border / outline
+          selection: '#BFDBFE',      // text/image selection
+          'gradient-to': '#3B82F6',  // gradient end stop
         },
         success: {
           DEFAULT: '#16A34A',
@@ -73,9 +77,10 @@ export default {
       boxShadow: {
         soft: '0 1px 3px rgba(15, 15, 16, 0.06), 0 4px 16px -4px rgba(15, 15, 16, 0.10)',
         card: '0 0 0 1px rgba(15, 15, 16, 0.06), 0 2px 8px -2px rgba(15, 15, 16, 0.08)',
-        ring: '0 0 0 3px rgba(109, 91, 208, 0.25)',
+        // Focus ring — 3px blue halo at 35% opacity (WCAG AA safe)
+        ring: '0 0 0 3px rgba(37, 99, 235, 0.35)',
         'canvas-image': '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)',
-        'sidebar-active': '0 0 0 1px rgba(109,91,208,0.25), inset 0 0 0 1px rgba(109,91,208,0.08)',
+        'sidebar-active': '0 0 0 1px rgba(37,99,235,0.25), inset 0 0 0 1px rgba(37,99,235,0.08)',
       },
       keyframes: {
         scanline: {

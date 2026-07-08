@@ -23,7 +23,7 @@ type ButtonProps =
 // the radius too, so every button in the app reads as the same family of shape.
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
-    'bg-accent text-white border-transparent shadow-sm hover:bg-accent-hover active:bg-accent-hover',
+    'bg-accent text-white border-transparent shadow-sm hover:bg-accent-hover active:bg-accent-pressed',
   secondary:
     'bg-transparent text-ink dark:text-ink-dark border-border dark:border-border-dark hover:border-ink-tertiary dark:hover:border-ink-dark-tertiary hover:bg-black/[0.02] dark:hover:bg-white/[0.03]',
   ghost:
