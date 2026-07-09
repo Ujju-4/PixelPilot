@@ -1,9 +1,9 @@
+import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { LogoMark } from '@/components/icons/LogoMark';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useCommandPalette } from '@/contexts/CommandPaletteContext';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-// ⌘K still works as a keyboard shortcut — just no visible search bar
 
 const NAV_LINKS = [
   { to: '/', label: 'Editor' },
@@ -18,56 +18,61 @@ export function NavBar() {
   useKeyboardShortcuts({ 'mod+k': open });
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border dark:border-border-dark/60 bg-surface/90 dark:bg-surface-dark/90 shadow-[0_1px_0_rgba(15,15,16,0.02)] backdrop-blur-md">
-      <div className="flex h-16 items-center justify-between gap-4 px-4">
+    <motion.header
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.42, ease: [0.32, 0.72, 0, 1] }}
+      className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md dark:bg-surface-dark/90"
+    >
+      {/* 3-col grid: logo left · tabs center · toggle right */}
+      <div className="grid h-[56px] grid-cols-[1fr_auto_1fr] items-center px-5">
 
-        {/* Left: Logo + Nav */}
-        <div className="flex h-full min-w-0 items-center gap-[20px]">
-          <Link
-            to="/"
-            className="flex h-full shrink-0 items-center gap-[12px] text-ink dark:text-ink-dark transition-opacity hover:opacity-80"
-          >
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl">
-              <LogoMark className="h-[32px] w-[32px]" />
-            </span>
-            <span className="hidden shrink-0 text-[18px] font-semibold leading-none tracking-tight sm:block">
-              PixelPilot
-            </span>
-          </Link>
+        {/* Left */}
+        <Link
+          to="/"
+          className="flex items-center gap-[10px] justify-self-start text-ink dark:text-ink-dark transition-opacity hover:opacity-75"
+        >
+          <LogoMark className="h-[26px] w-[26px]" />
+          <span className="hidden text-[14px] font-semibold tracking-tight sm:block">
+            PixelPilot
+          </span>
+        </Link>
 
-          {/* Separator */}
-          <div className="hidden h-5 w-px shrink-0 bg-border dark:bg-border-dark sm:block" />
+        {/* Center — tabs with spring layoutId indicator */}
+        <nav className="flex h-9 items-center gap-0.5" aria-label="Primary navigation">
+          {NAV_LINKS.map((link) => {
+            const isActive = location.pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={[
+                  'relative flex h-9 items-center rounded-lg px-3.5 text-[13px] font-medium transition-colors duration-150',
+                  isActive
+                    ? 'text-ink dark:text-ink-dark'
+                    : 'text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark',
+                ].join(' ')}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="navbar-active-bg"
+                    className="absolute inset-0 rounded-lg bg-accent-subtle/70 dark:bg-accent-subtle-dark/80"
+                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                  />
+                )}
+                <span className="relative">{link.label}</span>
 
-          {/* Nav tabs */}
-          <nav className="flex h-9 items-center gap-0.5" aria-label="Primary navigation">
-            {NAV_LINKS.map((link) => {
-              const isActive = location.pathname === link.to;
-              return (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={[
-                    'relative flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-colors duration-150',
-                    isActive
-                      ? 'text-ink dark:text-ink-dark'
-                      : 'text-ink-secondary hover:text-ink dark:text-ink-dark-secondary dark:hover:text-ink-dark',
-                  ].join(' ')}
-                >
-                  {isActive && (
-                    <span className="absolute inset-0 rounded-lg bg-canvas ring-1 ring-border/60 dark:bg-canvas-dark dark:ring-border-dark/60" />
-                  )}
-                  <span className="relative">{link.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+              </Link>
+            );
+          })}
+        </nav>
 
-        {/* Right: Theme toggle */}
-        <div className="flex h-full shrink-0 items-center">
+        {/* Right */}
+        <div className="flex items-center justify-self-end">
           <ThemeToggle />
         </div>
+
       </div>
-    </header>
+    </motion.header>
   );
 }

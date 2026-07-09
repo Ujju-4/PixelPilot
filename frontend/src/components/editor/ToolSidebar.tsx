@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { EditToolId } from '@/types/edit';
 import { TOOLS, TOOL_CATEGORIES } from '@/components/editor/EditorPanel';
 import { ImageIcon } from '@/components/icons/UploadIcons';
@@ -9,20 +9,38 @@ interface ToolSidebarProps {
   onSelect: (tool: EditToolId | null) => void;
   collapsed: boolean;
   onToggleCollapsed: () => void;
-  /** True before an image is loaded — tools render but are inert. */
   disabled?: boolean;
 }
 
 const TOOLS_BY_ID = Object.fromEntries(TOOLS.map((t) => [t.id, t]));
 
+// Spring for sidebar width collapse/expand
+const WIDTH_SPRING = { type: 'spring' as const, stiffness: 380, damping: 38, mass: 0.9 };
+
+// Light mode: solid white surface, shadow-ambient
+// Dark mode: glass panel — semi-transparent bg + backdrop blur + inner shimmer + deep drop shadow
+const PANEL_BASE = [
+  'm-2 flex shrink-0 flex-col overflow-hidden rounded-2xl',
+  // light
+  'border border-border bg-surface shadow-ambient',
+  // dark — glass float
+  'dark:border-white/[0.075] dark:bg-surface-dark/80 dark:backdrop-blur-glass dark:shadow-glass-panel',
+].join(' ');
+
 export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed, disabled = false }: ToolSidebarProps) {
   return (
-    <aside
-      style={{ width: collapsed ? 56 : 208 }}
-      className="flex shrink-0 flex-col overflow-hidden border-r border-border bg-surface shadow-[1px_0_0_rgba(15,15,16,0.02)] transition-[width] duration-200 ease-out dark:border-border-dark/60 dark:bg-surface-dark"
+    <motion.aside
+      initial={{ opacity: 0, x: -12, width: collapsed ? 56 : 192 }}
+      animate={{ opacity: 1, x: 0, width: collapsed ? 56 : 192 }}
+      transition={{
+        opacity: { duration: 0.35, ease: [0.32, 0.72, 0, 1] },
+        x: { duration: 0.35, ease: [0.32, 0.72, 0, 1] },
+        width: WIDTH_SPRING,
+      }}
+      className={PANEL_BASE}
     >
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-2 py-3">
-        {/* Overview entry */}
+      <div className={['flex flex-1 flex-col gap-3 overflow-y-auto py-3', collapsed ? 'px-1.5' : 'px-2'].join(' ')}>
+        {/* Overview */}
         <SidebarButton
           label="Overview"
           icon={ImageIcon}
@@ -35,18 +53,25 @@ export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed
         <div className="flex flex-col gap-3">
           {TOOL_CATEGORIES.map((category) => (
             <div key={category.label} className="flex flex-col">
-              {!collapsed && (
-                <p
-                  className={[
-                    'mb-1 px-2.5 text-[10px] font-semibold uppercase tracking-widest',
-                    disabled
-                      ? 'text-ink-tertiary/40 dark:text-ink-dark-tertiary/40'
-                      : 'text-ink-tertiary dark:text-ink-dark-tertiary',
-                  ].join(' ')}
-                >
-                  {category.label}
-                </p>
-              )}
+              <AnimatePresence initial={false}>
+                {!collapsed && (
+                  <motion.p
+                    key="cat-label"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                    className={[
+                      'mb-1 overflow-hidden px-2.5 text-[10px] font-semibold uppercase tracking-widest',
+                      disabled
+                        ? 'text-ink-tertiary/40 dark:text-ink-dark-tertiary/40'
+                        : 'text-ink-tertiary dark:text-ink-dark-tertiary',
+                    ].join(' ')}
+                  >
+                    {category.label}
+                  </motion.p>
+                )}
+              </AnimatePresence>
               {category.ids.map((id) => {
                 const tool = TOOLS_BY_ID[id];
                 if (!tool) return null;
@@ -68,20 +93,37 @@ export function ToolSidebar({ activeTool, onSelect, collapsed, onToggleCollapsed
       </div>
 
       {/* Collapse toggle */}
-      <div className="border-t border-border/50 p-2 dark:border-border-dark/40">
+      <div className="border-t border-border/50 p-2 dark:border-white/[0.06]">
         <button
           type="button"
           onClick={onToggleCollapsed}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="flex h-11 w-full items-center justify-center gap-1.5 rounded-md text-[13px] font-medium text-ink-secondary transition-colors hover:bg-black/5 hover:text-ink dark:text-ink-dark-secondary dark:hover:bg-white/5 dark:hover:text-ink-dark"
+          className="flex h-11 w-full items-center justify-center gap-1.5 rounded-md text-[13px] font-medium text-ink-secondary transition-colors hover:bg-black/5 hover:text-ink dark:text-ink-dark-secondary dark:hover:bg-white/[0.06] dark:hover:text-ink-dark"
         >
-          <ChevronLeftIcon
-            className={`h-[18px] w-[18px] shrink-0 transition-transform duration-200 ${collapsed ? 'rotate-180' : ''}`}
-          />
-          {!collapsed && <span>Collapse</span>}
+          <motion.span
+            animate={{ rotate: collapsed ? 180 : 0 }}
+            transition={WIDTH_SPRING}
+            className="flex shrink-0 items-center justify-center"
+          >
+            <ChevronLeftIcon className="h-[18px] w-[18px]" />
+          </motion.span>
+          <AnimatePresence initial={false}>
+            {!collapsed && (
+              <motion.span
+                key="collapse-label"
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.16, ease: 'easeOut' }}
+                className="overflow-hidden whitespace-nowrap"
+              >
+                Collapse
+              </motion.span>
+            )}
+          </AnimatePresence>
         </button>
       </div>
-    </aside>
+    </motion.aside>
   );
 }
 
@@ -109,7 +151,7 @@ function SidebarButton({
       title={disabled ? 'Upload an image to unlock tools' : collapsed ? label : undefined}
       className={[
         'group relative flex items-center rounded-md transition-colors duration-100 select-none',
-        collapsed ? 'mx-auto h-11 w-11 justify-center' : 'h-11 w-full gap-[12px] px-2.5',
+        collapsed ? 'mx-auto h-11 w-11 justify-center' : 'h-11 w-full gap-[12px] pl-[13px] pr-2.5',
         disabled
           ? 'cursor-not-allowed text-ink-tertiary/50 dark:text-ink-dark-tertiary/40'
           : isActive
@@ -120,17 +162,35 @@ function SidebarButton({
       {isActive && !disabled && (
         <motion.span
           layoutId="tool-sidebar-active-bg"
-          className="absolute inset-0 rounded-md bg-accent-subtle dark:bg-accent-subtle-dark"
+          className="absolute inset-0 rounded-md bg-accent-subtle/50 dark:bg-accent-subtle-dark/60"
+          transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+        />
+      )}
+      {isActive && !disabled && !collapsed && (
+        <motion.span
+          layoutId="tool-sidebar-active-bar"
+          className="absolute left-0 top-1.5 bottom-1.5 w-[2.5px] rounded-full bg-accent"
           transition={{ type: 'spring', stiffness: 500, damping: 40 }}
         />
       )}
       {!isActive && !disabled && (
-        <span className="absolute inset-0 rounded-md bg-black/5 opacity-0 transition-opacity duration-100 group-hover:opacity-100 dark:bg-white/5" />
+        <span className="absolute inset-0 rounded-md bg-black/5 opacity-0 transition-opacity duration-100 group-hover:opacity-100 dark:bg-white/[0.06]" />
       )}
       <Icon className="relative h-[18px] w-[18px] shrink-0" />
-      {!collapsed && (
-        <span className="relative truncate text-[14px] font-medium leading-[1.3]">{label}</span>
-      )}
+      <AnimatePresence initial={false}>
+        {!collapsed && (
+          <motion.span
+            key="tool-label"
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -6 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="relative overflow-hidden whitespace-nowrap text-[14px] font-medium leading-[1.3]"
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
     </button>
   );
 }

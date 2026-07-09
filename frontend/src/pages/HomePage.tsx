@@ -150,7 +150,7 @@ export function HomePage() {
   // whether or not an image has been loaded. Only what fills the canvas and
   // panel regions changes.
   return (
-    <div className="flex w-full" style={{ height: 'calc(100vh - 64px)' }}>
+    <div className="flex w-full bg-stage dark:bg-stage-dark" style={{ height: 'calc(100vh - 56px)' }}>
       <ToolSidebar
         activeTool={activeTool}
         onSelect={setActiveTool}

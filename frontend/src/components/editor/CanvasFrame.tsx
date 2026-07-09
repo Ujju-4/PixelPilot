@@ -19,7 +19,7 @@ export function CanvasFrame({ topBar, children }: CanvasFrameProps) {
         {topBar ?? null}
       </div>
       {/* Work surface — canvas-grid class now adapts dot colour per theme (see globals.css) */}
-      <div className="canvas-grid relative flex flex-1 min-h-0 items-center justify-center p-6">
+      <div className="canvas-grid relative flex flex-1 min-h-0 items-center justify-center p-2">
         {children}
       </div>
     </div>

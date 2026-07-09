@@ -7,7 +7,7 @@ export default {
       colors: {
         canvas: {
           DEFAULT: '#EDEDF0',
-          dark: '#0F0F10',
+          dark: '#08080A',       // deeper dark from the new design
         },
         surface: {
           DEFAULT: '#FFFFFF',
@@ -23,20 +23,20 @@ export default {
           DEFAULT: '#18181B',
           secondary: '#71717A',
           tertiary: '#A1A1AA',
-          dark: '#FAFAFA',
-          'dark-secondary': '#A1A1AA',
-          'dark-tertiary': '#71717A',
+          dark: '#EDEDEF',
+          'dark-secondary': '#96979C',
+          'dark-tertiary': '#6C6D72',
         },
         accent: {
-          DEFAULT: '#2563EB',        // primary blue
-          hover: '#1D4ED8',          // hover blue
-          pressed: '#1E40AF',        // pressed / active
-          subtle: '#DBEAFE',         // subtle background (light)
-          'subtle-dark': '#172554',  // subtle background (dark)
-          glow: 'rgba(37,99,235,0.15)',
-          border: '#93C5FD',         // accent border / outline
-          selection: '#BFDBFE',      // text/image selection
-          'gradient-to': '#3B82F6',  // gradient end stop
+          DEFAULT: '#4C51BF',
+          hover: '#3F44A6',
+          pressed: '#33378C',
+          subtle: '#EEF0FC',
+          'subtle-dark': '#14152B',
+          glow: 'rgba(76,81,191,0.18)',
+          border: '#C7CBF0',
+          selection: '#DEE1F8',
+          'gradient-to': '#6B70D6',
         },
         success: {
           DEFAULT: '#16A34A',
@@ -46,10 +46,9 @@ export default {
           DEFAULT: '#DC2626',
           subtle: '#FDECEC',
         },
-        // Canvas workspace — light mode is a cool neutral gray, dark is near-black
         stage: {
           DEFAULT: '#E1E2E6',
-          dark: '#0A0A0C',
+          dark: '#08080A',
         },
       },
       fontFamily: {
@@ -76,12 +75,18 @@ export default {
         full: '9999px',
       },
       boxShadow: {
-        soft: '0 1px 3px rgba(15, 15, 16, 0.06), 0 4px 16px -4px rgba(15, 15, 16, 0.10)',
-        card: '0 0 0 1px rgba(15, 15, 16, 0.06), 0 2px 8px -2px rgba(15, 15, 16, 0.08)',
-        // Focus ring — 3px blue halo at 35% opacity (WCAG AA safe)
-        ring: '0 0 0 3px rgba(37, 99, 235, 0.35)',
+        soft: '0 1px 3px rgba(15,15,16,0.06), 0 4px 16px -4px rgba(15,15,16,0.10)',
+        card: '0 0 0 1px rgba(15,15,16,0.06), 0 2px 8px -2px rgba(15,15,16,0.08)',
+        // Light-mode ambient elevation
+        ambient: '0 1px 2px rgba(10,16,14,0.28), 0 24px 48px -20px rgba(10,16,14,0.40), 0 0 0 1px rgba(0,0,0,0.04)',
+        // Dark-mode glass float: inner white shimmer + deep outer drop
+        'glass-panel': '0 1px 1px rgba(255,255,255,0.05) inset, 0 30px 60px -22px rgba(0,0,0,0.80), 0 0 0 1px rgba(255,255,255,0.00)',
+        ring: '0 0 0 3px rgba(76,81,191,0.28)',
         'canvas-image': '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)',
-        'sidebar-active': '0 0 0 1px rgba(37,99,235,0.25), inset 0 0 0 1px rgba(37,99,235,0.08)',
+        'sidebar-active': '0 0 0 1px rgba(76,81,191,0.20), inset 0 0 0 1px rgba(76,81,191,0.08)',
+      },
+      backdropBlur: {
+        glass: '18px',
       },
       keyframes: {
         scanline: {
@@ -100,12 +105,22 @@ export default {
           '0%': { opacity: '0', transform: 'translateX(8px)' },
           '100%': { opacity: '1', transform: 'translateX(0)' },
         },
+        breathe: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.045)', opacity: '0.85' },
+        },
+        'ring-pulse': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(76,81,191,0.0)' },
+          '50%': { boxShadow: '0 0 0 6px rgba(76,81,191,0.10)' },
+        },
       },
       animation: {
         scanline: 'scanline 1.8s ease-in-out infinite',
         'fade-in': 'fade-in 0.2s ease-out',
         'fade-up': 'fade-up 0.25s ease-out',
         'slide-in-right': 'slide-in-right 0.2s ease-out',
+        breathe: 'breathe 3.6s ease-in-out infinite',
+        'ring-pulse': 'ring-pulse 3.6s ease-in-out infinite',
       },
     },
   },

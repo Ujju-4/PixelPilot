@@ -2,6 +2,18 @@ interface IconProps {
   className?: string;
 }
 
+export function FrameUploadIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M3 8V6a2.5 2.5 0 0 1 2.5-2.5H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M21 8V6a2.5 2.5 0 0 0-2.5-2.5H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M3 16v2a2.5 2.5 0 0 0 2.5 2.5H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M21 16v2a2.5 2.5 0 0 1-2.5 2.5H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M12 16V7.5m0 0-3 3m3-3 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function UploadCloudIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">

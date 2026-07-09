@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent, type DragEv
 import { motion } from 'framer-motion';
 import { ACCEPTED_IMAGE_MIME_TYPES } from '@/types/image';
 import { validateImageFile } from '@/utils/fileValidation';
-import { UploadCloudIcon } from '@/components/icons/UploadIcons';
+import { FrameUploadIcon } from '@/components/icons/UploadIcons';
 
 interface DropzoneProps {
   onFileSelected: (file: File) => void;
@@ -74,23 +74,21 @@ export function Dropzone({ onFileSelected, disabled = false, tone = 'light', cla
     ? 'border-accent bg-accent-subtle dark:bg-accent-subtle-dark'
     : 'border-border/60 dark:border-border-dark/60 hover:border-accent/40 dark:hover:border-accent/30 hover:bg-canvas dark:hover:bg-canvas-dark';
 
-  // ─── Icon circle ──────────────────────────────────────────────────────────
-  const iconBg = isCanvas
-    ? isDragActive
-      ? 'bg-accent/20'
-      : 'bg-black/[0.06] dark:bg-white/[0.06]'
-    : isDragActive
-      ? 'bg-accent/15'
-      : 'bg-border/30 dark:bg-border-dark/30';
+  // ─── Icon well — soft ambient glow behind a bracket-frame icon, not a flat filled circle ──
+  const iconWellRing = isDragActive
+    ? 'ring-accent/40'
+    : isCanvas
+      ? 'ring-black/[0.08] dark:ring-white/[0.08]'
+      : 'ring-border dark:ring-border-dark';
 
   const iconColor = isDragActive
     ? 'text-accent'
     : isCanvas
-      ? 'text-ink-secondary dark:text-white/40'
+      ? 'text-ink-secondary dark:text-white/45'
       : 'text-ink-secondary dark:text-ink-dark-secondary';
 
   // ─── Text colours ─────────────────────────────────────────────────────────
-  const titleColor  = isCanvas ? 'text-ink dark:text-white/90'                           : 'text-ink dark:text-ink-dark';
+  const titleColor  = isCanvas ? 'text-ink dark:text-white/92'                          : 'text-ink dark:text-ink-dark';
   const subtitleColor = isCanvas ? 'text-ink-secondary dark:text-white/45'               : 'text-ink-secondary dark:text-ink-dark-secondary';
   const hintColor   = isCanvas ? 'text-ink-tertiary dark:text-white/25'                  : 'text-ink-secondary/60 dark:text-ink-dark-secondary/60';
   const errorColor  = isCanvas ? 'text-danger dark:text-red-400'                         : 'text-danger';
@@ -109,29 +107,36 @@ export function Dropzone({ onFileSelected, disabled = false, tone = 'light', cla
         onDrop={handleDrop}
         onDragOver={(e) => { e.preventDefault(); if (!disabled) setIsDragActive(true); }}
         onDragLeave={() => setIsDragActive(false)}
-        whileHover={disabled ? undefined : { scale: 1.004 }}
+        whileHover={disabled ? undefined : { scale: 1.003 }}
         whileTap={disabled ? undefined : { scale: 0.997 }}
         className={[
-          'flex cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-8 text-center transition-all duration-200',
+          'relative flex cursor-pointer flex-col items-center justify-center gap-5 rounded-2xl border-[1.5px] border-dashed px-8 text-center transition-all duration-200',
           isCanvas ? 'min-h-[340px]' : 'min-h-[260px] py-10',
           disabled ? 'cursor-not-allowed opacity-60' : '',
           isCanvas ? canvasBorder : lightBorder,
+          isDragActive ? 'shadow-ambient' : '',
           className,
         ].join(' ')}
       >
-        <div className={['flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200', iconBg].join(' ')}>
-          <UploadCloudIcon className={['h-5 w-5', iconColor].join(' ')} />
+        <div
+          className={[
+            'flex h-[52px] w-[52px] items-center justify-center rounded-full ring-1 transition-all duration-300',
+            isDragActive ? 'animate-breathe bg-accent/10' : 'bg-black/[0.02] dark:bg-white/[0.03]',
+            iconWellRing,
+          ].join(' ')}
+        >
+          <FrameUploadIcon className={['h-[22px] w-[22px] transition-colors duration-200', iconColor].join(' ')} />
         </div>
 
         <div>
-          <p className={`text-[15px] font-semibold ${titleColor}`}>
+          <p className={`text-[16px] font-semibold tracking-[-0.01em] ${titleColor}`}>
             {isDragActive ? 'Release to upload' : 'Drop an image here'}
           </p>
-          <p className={`mt-1 text-sm ${subtitleColor}`}>
+          <p className={`mt-1.5 text-sm ${subtitleColor}`}>
             or <span className="font-medium text-accent">browse files</span> · paste from clipboard
           </p>
-          <p className={`mt-1.5 text-xs ${hintColor}`}>
-            PNG · JPG · WEBP · AVIF · HEIC — up to 25 MB
+          <p className={`mt-3 text-[10.5px] font-medium uppercase tracking-[0.08em] ${hintColor}`}>
+            PNG · JPG · WEBP · AVIF · HEIC — up to 25&nbsp;MB
           </p>
         </div>
 

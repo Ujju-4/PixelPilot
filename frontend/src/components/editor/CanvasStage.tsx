@@ -91,7 +91,7 @@ export function CanvasStage({
         </>
       }
     >
-      <div className="w-full h-full max-w-6xl flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center">
         <AnimatePresence mode="wait" initial={false}>
           {isRemovingObject ? (
             <motion.div
@@ -132,7 +132,7 @@ export function CanvasStage({
               <ImageViewer
                 src={currentUrl}
                 alt={displayLabel}
-                className="w-full max-h-[calc(100vh-160px)]"
+                className="w-full max-h-[calc(100vh-112px)]"
               />
             </motion.div>
           )}
