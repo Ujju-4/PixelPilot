@@ -5,18 +5,37 @@ interface LogoMarkProps {
 export function LogoMark({ className }: LogoMarkProps) {
   return (
     <svg
-      viewBox="0 0 32 32"
+      viewBox="0 0 64 64"
       className={className}
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect width="32" height="32" rx="9" className="fill-ink dark:fill-ink-dark" />
-      <path
-        d="M16 8L22.5 19.5H9.5L16 8Z"
+      <g className="fill-accent">
+        <path d="M34 32 L24 9 L44 15 Z" />
+      </g>
+      <g className="fill-accent-gradient-to">
+        <path d="M34 32 L24 9 L44 15 Z" transform="rotate(60 32 32)" />
+      </g>
+      <g className="fill-accent">
+        <path d="M34 32 L24 9 L44 15 Z" transform="rotate(120 32 32)" />
+      </g>
+      <g className="fill-accent-gradient-to">
+        <path d="M34 32 L24 9 L44 15 Z" transform="rotate(180 32 32)" />
+      </g>
+      <g className="fill-accent">
+        <path d="M34 32 L24 9 L44 15 Z" transform="rotate(240 32 32)" />
+      </g>
+      <g className="fill-accent-gradient-to">
+        <path d="M34 32 L24 9 L44 15 Z" transform="rotate(300 32 32)" />
+      </g>
+      <rect
+        x="29"
+        y="29"
+        width="6"
+        height="6"
+        rx="1"
         className="fill-canvas dark:fill-canvas-dark"
       />
-      <circle cx="16" cy="22.5" r="1.6" className="fill-accent" />
     </svg>
   );
 }
